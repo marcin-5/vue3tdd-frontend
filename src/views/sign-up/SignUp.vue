@@ -10,11 +10,11 @@
   </div>
   <div>
     <label for="password">Password</label>
-    <input id="password" type="password" @input="onChangeInput"/>
+    <input id="password" type="password" @input="(event) => (password = event.target.value)"/>
   </div>
   <div>
     <label for="passwordRepeat">Password repeat</label>
-    <input id="passwordRepeat" type="password" @input="onChangeInput"/>
+    <input id="passwordRepeat" type="password" @input="(event) => (passwordRepeat = event.target.value)"/>
   </div>
   <button :disabled="isDisabledComputed">Sign Up</button>
 </template>
@@ -31,19 +31,4 @@ const passwordRepeat = ref('')
 const isDisabledComputed = computed(() => {
   return (password.value || passwordRepeat.value) ? password.value !== passwordRepeat.value : true
 })
-
-const updatePasswordValue = (id, value) => {
-  if (id === PASSWORD_ID) {
-    password.value = value
-  } else if (id === PASSWORD_REPEAT_ID) {
-    passwordRepeat.value = value
-  }
-}
-
-const onChangeInput = (event) => {
-  const {id, value} = event.target
-  if (id === PASSWORD_ID || id === PASSWORD_REPEAT_ID) {
-    updatePasswordValue(id, value)
-  }
-}
 </script>
