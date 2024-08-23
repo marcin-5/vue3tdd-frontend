@@ -10,11 +10,11 @@
   </div>
   <div>
     <label for="password">Password</label>
-    <input id="password" type="password" @input="(event) => (password = event.target.value)"/>
+    <input id="password" type="password" v-model="password"/>
   </div>
   <div>
     <label for="passwordRepeat">Password repeat</label>
-    <input id="passwordRepeat" type="password" @input="(event) => (passwordRepeat = event.target.value)"/>
+    <input id="passwordRepeat" type="password" v-model="passwordRepeat"/>
   </div>
   <button :disabled="isDisabledComputed">Sign Up</button>
 </template>
