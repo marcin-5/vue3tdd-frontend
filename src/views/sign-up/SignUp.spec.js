@@ -14,11 +14,18 @@ const INPUT_LABELS = {
   passwordRepeat: 'Password repeat',
 }
 
-const setupUserEvent = userEvent.setup()
+const setupUserEvent = () => userEvent.setup()
+
+const clearInput = async (label) => {
+  const input = screen.getByLabelText(label)
+  await userEvent.clear(input)
+}
 
 const fillInput = async (label, value) => {
   const input = screen.getByLabelText(label)
-  await setupUserEvent.type(input, value)
+  const localUser = userEvent.setup()
+  await clearInput(label)
+  await localUser.type(input, value)
 }
 
 describe('SignUp Component', () => {
@@ -73,8 +80,11 @@ describe('SignUp Component', () => {
     beforeEach(async () => {
       const passwordInput = screen.getByLabelText(INPUT_LABELS.password)
       const passwordRepeatInput = screen.getByLabelText(INPUT_LABELS.passwordRepeat)
-      await setupUserEvent.type(passwordInput, 'password')
-      await setupUserEvent.type(passwordRepeatInput, 'password')
+      const localUser = setupUserEvent()
+      await clearInput(INPUT_LABELS.password)
+      await clearInput(INPUT_LABELS.passwordRepeat)
+      await localUser.type(passwordInput, 'password')
+      await localUser.type(passwordRepeatInput, 'password')
     })
 
     it('enables the button', () => {
@@ -96,7 +106,8 @@ describe('SignUp Component', () => {
         await fillInput(INPUT_LABELS.passwordRepeat, credentials.passwordRepeat)
 
         const button = screen.getByRole('button', {name: BUTTON_LABEL})
-        await setupUserEvent.click(button)
+        const localUser = setupUserEvent()
+        await localUser.click(button)
       })
 
       it('sends username, email, and password to the backend', () => {
