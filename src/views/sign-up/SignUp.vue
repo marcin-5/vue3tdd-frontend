@@ -10,17 +10,17 @@
   </div>
   <div>
     <label for="password">Password</label>
-    <input id="password" type="password" @input="onPasswordInput"/>
+    <input id="password" type="password" @input="onChangeInput"/>
   </div>
   <div>
     <label for="passwordRepeat">Password repeat</label>
-    <input id="passwordRepeat" type="password" @input="onPasswordInput"/>
+    <input id="passwordRepeat" type="password" @input="onChangeInput"/>
   </div>
-  <button :disabled="isDisabled()">Sign Up</button>
+  <button :disabled="isDisabledComputed">Sign Up</button>
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import {computed, ref} from 'vue'
 
 const PASSWORD_ID = 'password'
 const PASSWORD_REPEAT_ID = 'passwordRepeat'
@@ -28,9 +28,9 @@ const PASSWORD_REPEAT_ID = 'passwordRepeat'
 const password = ref('')
 const passwordRepeat = ref('')
 
-const isDisabled = () => {
+const isDisabledComputed = computed(() => {
   return (password.value || passwordRepeat.value) ? password.value !== passwordRepeat.value : true
-}
+})
 
 const updatePasswordValue = (id, value) => {
   if (id === PASSWORD_ID) {
@@ -40,7 +40,7 @@ const updatePasswordValue = (id, value) => {
   }
 }
 
-const onPasswordInput = (event) => {
+const onChangeInput = (event) => {
   const {id, value} = event.target
   if (id === PASSWORD_ID || id === PASSWORD_REPEAT_ID) {
     updatePasswordValue(id, value)
