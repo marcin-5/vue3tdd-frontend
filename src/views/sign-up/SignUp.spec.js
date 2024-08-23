@@ -1,5 +1,5 @@
-import {beforeEach, vi} from 'vitest'
-import {render, screen} from '@testing-library/vue'
+import {afterEach, beforeEach, vi} from 'vitest'
+import {cleanup, render, screen} from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import axios from "axios"
 import SignUp from './SignUp.vue'
@@ -24,6 +24,11 @@ const fillInput = async (label, value) => {
 describe('SignUp Component', () => {
   beforeEach(() => {
     render(SignUp)
+  })
+
+  afterEach(() => {
+    vi.resetAllMocks()
+    cleanup()
   })
 
   it('has Sign Up header', () => {
@@ -84,7 +89,7 @@ describe('SignUp Component', () => {
         passwordRepeat: 'P4ssword',
       }
 
-      it('sends username, email, and password to the backend', async () => {
+      beforeEach(async () => {
         await fillInput(INPUT_LABELS.username, credentials.username)
         await fillInput(INPUT_LABELS.email, credentials.email)
         await fillInput(INPUT_LABELS.password, credentials.password)
@@ -92,7 +97,9 @@ describe('SignUp Component', () => {
 
         const button = screen.getByRole('button', {name: BUTTON_LABEL})
         await setupUserEvent.click(button)
+      })
 
+      it('sends username, email, and password to the backend', () => {
         expect(axios.post).toHaveBeenCalledWith('/api/v1/users', {
           username: credentials.username,
           email: credentials.email,
