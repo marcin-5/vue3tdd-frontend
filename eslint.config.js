@@ -3,7 +3,7 @@ import pluginJs from '@eslint/js'
 import pluginVue from 'eslint-plugin-vue'
 
 export default [
-  { files: ['**/*.{js,mjs,cjs,vue}'] },
+  {files: ['**/*.{js,mjs,cjs,vue}']},
   {
     languageOptions: {
       globals: {
@@ -12,6 +12,9 @@ export default [
         expect: 'readonly',
         describe: 'readonly',
       },
+    },
+    rules: {
+      indent: ['error', 2],
     },
   },
   pluginJs.configs.recommended,
