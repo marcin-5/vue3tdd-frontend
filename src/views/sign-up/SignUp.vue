@@ -2,19 +2,19 @@
   <h1>Sign Up</h1>
   <div>
     <label for="username">Username</label>
-    <input id="username" v-model="formState.username"/>
+    <input id="username" v-model="formState.username" />
   </div>
   <div>
     <label for="email">Email</label>
-    <input id="email" v-model="formState.email"/>
+    <input id="email" v-model="formState.email" />
   </div>
   <div>
     <label for="password">Password</label>
-    <input id="password" type="password" v-model="formState.password"/>
+    <input id="password" type="password" v-model="formState.password" />
   </div>
   <div>
     <label for="passwordRepeat">Password repeat</label>
-    <input id="passwordRepeat" type="password" v-model="formState.passwordRepeat"/>
+    <input id="passwordRepeat" type="password" v-model="formState.passwordRepeat" />
   </div>
   <button :disabled="isDisabledComputed" @click="submit">Sign Up</button>
 </template>
@@ -26,12 +26,16 @@ import axios from 'axios'
 const formState = reactive({email: '', username: '', password: '', passwordRepeat: ''})
 
 const isDisabledComputed = computed(() => {
-  return (formState.password || formState.passwordRepeat) ? formState.password !== formState.passwordRepeat : true
+  return formState.password || formState.passwordRepeat
+    ? formState.password !== formState.passwordRepeat
+    : true
 })
 
 const submit = () => {
   axios.post('/api/v1/users', {
-    username: formState.username, email: formState.email, password: formState.password,
+    username: formState.username,
+    email: formState.email,
+    password: formState.password,
   })
 }
 </script>
