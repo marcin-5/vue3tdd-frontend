@@ -1,12 +1,10 @@
-import {afterEach, beforeEach, vi} from 'vitest'
-import {cleanup, render, screen} from '@testing-library/vue'
+import {http, HttpResponse} from 'msw'
+import {afterAll, afterEach, beforeAll, beforeEach} from 'vitest'
+import {render, screen, waitFor} from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
-import axios from "axios"
 import SignUp from './SignUp.vue'
+import {setupServer} from 'msw/node'
 
-vi.mock('axios')
-
-const BUTTON_LABEL = 'Sign Up'
 const INPUT_LABELS = {
   username: 'Username',
   email: 'Email',
@@ -14,11 +12,13 @@ const INPUT_LABELS = {
   passwordRepeat: 'Password repeat',
 }
 
-const setupUserEvent = () => userEvent.setup()
+const BUTTON_LABEL = 'Sign Up'
 
-const clearInput = async (label) => {
-  const input = screen.getByLabelText(label)
-  await userEvent.clear(input)
+const credentials = {
+  username: 'user1',
+  email: 'user1@mail.com',
+  password: 'P4ssword',
+  passwordRepeat: 'P4ssword',
 }
 
 const fillInput = async (label, value) => {
@@ -28,14 +28,26 @@ const fillInput = async (label, value) => {
   await localUser.type(input, value)
 }
 
+const clearInput = async (label) => {
+  const input = screen.getByLabelText(label)
+  await userEvent.clear(input)
+}
+
+let requestBody
+const server = setupServer(
+  http.post('/api/v1/users', async ({request}) => {
+    requestBody = await request.json()
+    return HttpResponse.json({})
+  }),
+)
+
+beforeAll(() => server.listen())
+afterAll(() => server.close())
+afterEach(() => server.resetHandlers())
+
 describe('SignUp Component', () => {
   beforeEach(() => {
     render(SignUp)
-  })
-
-  afterEach(() => {
-    vi.resetAllMocks()
-    cleanup()
   })
 
   it('has Sign Up header', () => {
@@ -76,42 +88,21 @@ describe('SignUp Component', () => {
     expect(screen.getByRole('button', {name: BUTTON_LABEL})).toBeDisabled()
   })
 
-  describe('when user sets the same value for password inputs', () => {
+  describe('when user submits the form', () => {
     beforeEach(async () => {
-      const passwordInput = screen.getByLabelText(INPUT_LABELS.password)
-      const passwordRepeatInput = screen.getByLabelText(INPUT_LABELS.passwordRepeat)
-      const localUser = setupUserEvent()
-      await clearInput(INPUT_LABELS.password)
-      await clearInput(INPUT_LABELS.passwordRepeat)
-      await localUser.type(passwordInput, 'password')
-      await localUser.type(passwordRepeatInput, 'password')
+      await fillInput(INPUT_LABELS.username, credentials.username)
+      await fillInput(INPUT_LABELS.email, credentials.email)
+      await fillInput(INPUT_LABELS.password, credentials.password)
+      await fillInput(INPUT_LABELS.passwordRepeat, credentials.passwordRepeat)
+
+      const button = screen.getByRole('button', {name: BUTTON_LABEL})
+      const localUser = userEvent.setup()
+      await localUser.click(button)
     })
 
-    it('enables the button', () => {
-      expect(screen.getByRole('button', {name: BUTTON_LABEL})).toBeEnabled()
-    })
-
-    describe('when user submits form', () => {
-      const credentials = {
-        username: 'user1',
-        email: 'user1@mail.com',
-        password: 'P4ssword',
-        passwordRepeat: 'P4ssword',
-      }
-
-      beforeEach(async () => {
-        await fillInput(INPUT_LABELS.username, credentials.username)
-        await fillInput(INPUT_LABELS.email, credentials.email)
-        await fillInput(INPUT_LABELS.password, credentials.password)
-        await fillInput(INPUT_LABELS.passwordRepeat, credentials.passwordRepeat)
-
-        const button = screen.getByRole('button', {name: BUTTON_LABEL})
-        const localUser = setupUserEvent()
-        await localUser.click(button)
-      })
-
-      it('sends username, email, and password to the backend', () => {
-        expect(axios.post).toHaveBeenCalledWith('/api/v1/users', {
+    it('sends username, email, and password to the backend', async () => {
+      await waitFor(() => {
+        expect(requestBody).toEqual({
           username: credentials.username,
           email: credentials.email,
           password: credentials.password,

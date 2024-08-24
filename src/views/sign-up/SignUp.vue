@@ -21,9 +21,9 @@
 
 <script setup>
 import {computed, reactive} from 'vue'
-import axios from "axios";
+import axios from 'axios'
 
-const formState = reactive({email: '', username: '', password: '', passwordRepeat: ''});
+const formState = reactive({email: '', username: '', password: '', passwordRepeat: ''})
 
 const isDisabledComputed = computed(() => {
   return (formState.password || formState.passwordRepeat) ? formState.password !== formState.passwordRepeat : true
@@ -31,7 +31,7 @@ const isDisabledComputed = computed(() => {
 
 const submit = () => {
   axios.post('/api/v1/users', {
-    username: formState.username, email: formState.email, password: formState.password
+    username: formState.username, email: formState.email, password: formState.password,
   })
 }
 </script>
