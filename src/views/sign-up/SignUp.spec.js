@@ -11,9 +11,7 @@ const INPUT_LABELS = {
   password: 'Password',
   passwordRepeat: 'Password repeat',
 }
-
-const BUTTON_LABEL = 'Sign Up'
-
+const SIGN_UP_BUTTON_LABEL = 'Sign Up'
 const credentials = {
   username: 'user1',
   email: 'user1@mail.com',
@@ -33,6 +31,16 @@ const clearInput = async (label) => {
   await userEvent.clear(input)
 }
 
+const expectInputToBeInTheDocument = (label) => {
+  expect(screen.queryByLabelText(label)).toBeInTheDocument()
+}
+
+const expectPasswordInputType = (label) => {
+  expect(screen.queryByLabelText(label)).toHaveAttribute('type', 'password')
+}
+
+const signUpButtonSelector = {name: SIGN_UP_BUTTON_LABEL}
+
 let requestBody
 const server = setupServer(
   http.post('/api/v1/users', async ({request}) => {
@@ -51,53 +59,58 @@ describe('SignUp Component', () => {
   })
 
   it('has Sign Up header', () => {
-    const header = screen.getByRole('heading', {name: BUTTON_LABEL})
+    const header = screen.getByRole('heading', signUpButtonSelector)
     expect(header).toBeInTheDocument()
   })
 
   it('has username input', () => {
-    expect(screen.queryByLabelText(INPUT_LABELS.username)).toBeInTheDocument()
+    expectInputToBeInTheDocument(INPUT_LABELS.username)
   })
 
   it('has email input', () => {
-    expect(screen.queryByLabelText(INPUT_LABELS.email)).toBeInTheDocument()
+    expectInputToBeInTheDocument(INPUT_LABELS.email)
   })
 
   it('has password input', () => {
-    expect(screen.queryByLabelText(INPUT_LABELS.password)).toBeInTheDocument()
+    expectInputToBeInTheDocument(INPUT_LABELS.password)
   })
 
   it('has password type for password input', () => {
-    expect(screen.queryByLabelText(INPUT_LABELS.password)).toHaveAttribute('type', 'password')
+    expectPasswordInputType(INPUT_LABELS.password)
   })
 
   it('has password repeat input', () => {
-    expect(screen.queryByLabelText(INPUT_LABELS.passwordRepeat)).toBeInTheDocument()
+    expectInputToBeInTheDocument(INPUT_LABELS.passwordRepeat)
   })
 
   it('has password type for password repeat input', () => {
-    expect(screen.queryByLabelText(INPUT_LABELS.passwordRepeat)).toHaveAttribute('type', 'password')
+    expectPasswordInputType(INPUT_LABELS.passwordRepeat)
   })
 
   it('has sign up button', () => {
-    const button = screen.getByRole('button', {name: BUTTON_LABEL})
+    const button = screen.getByRole('button', signUpButtonSelector)
     expect(button).toBeInTheDocument()
   })
 
   it('disables the button initially', () => {
-    expect(screen.getByRole('button', {name: BUTTON_LABEL})).toBeDisabled()
+    expect(screen.getByRole('button', signUpButtonSelector)).toBeDisabled()
   })
 
   describe('when user submits the form', () => {
+    let button
+
     beforeEach(async () => {
       await fillInput(INPUT_LABELS.username, credentials.username)
       await fillInput(INPUT_LABELS.email, credentials.email)
       await fillInput(INPUT_LABELS.password, credentials.password)
       await fillInput(INPUT_LABELS.passwordRepeat, credentials.passwordRepeat)
-
-      const button = screen.getByRole('button', {name: BUTTON_LABEL})
+      button = screen.getByRole('button', signUpButtonSelector)
       const localUser = userEvent.setup()
       await localUser.click(button)
+    })
+
+    it('enables button', () => {
+      expect(button).toBeEnabled()
     })
 
     it('sends username, email, and password to the backend', async () => {
