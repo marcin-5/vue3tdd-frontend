@@ -15,6 +15,9 @@ export default [
     },
     rules: {
       indent: ['error', 2],
+      semi: ['warn', 'never'],
+      quotes: ['warn', 'single'],
+      'eol-last': ['warn', 'always'],
     },
   },
   pluginJs.configs.recommended,
