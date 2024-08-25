@@ -28,6 +28,7 @@
         </div>
         <div class="text-center">
           <button class="btn btn-primary" :disabled="isDisabledComputed || apiProgress">
+            <span v-if="apiProgress" role="status" class="spinner-border spinner-border-sm"></span>
             Sign Up
           </button>
         </div>
