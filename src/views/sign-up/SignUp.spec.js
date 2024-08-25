@@ -38,9 +38,24 @@ const server = setupServer(
   }),
 )
 
-beforeAll(() => server.listen())
-afterAll(() => server.close())
-afterEach(() => server.resetHandlers())
+const renderSignUpForm = async () => {
+  await fillInput(INPUT_LABELS.username, CREDENTIALS.username)
+  await fillInput(INPUT_LABELS.email, CREDENTIALS.email)
+  await fillInput(INPUT_LABELS.password, CREDENTIALS.password)
+  await fillInput(INPUT_LABELS.passwordRepeat, CREDENTIALS.passwordRepeat)
+  const button = screen.getByRole('button', signUpButtonSelector)
+  const user = userEvent.setup()
+  const result = render(SignUp)
+  return {
+    ...result,
+    user,
+    elements: {button},
+  }
+}
+
+const clickButton = async (user, button) => {
+  await user.click(button)
+}
 
 describe('SignUp Component', () => {
   beforeEach(() => {
@@ -86,24 +101,29 @@ describe('SignUp Component', () => {
   })
 
   describe('when user sets same value for password inputs', () => {
-    let button, user
-    beforeEach(async () => {
-      await fillInput(INPUT_LABELS.username, CREDENTIALS.username)
-      await fillInput(INPUT_LABELS.email, CREDENTIALS.email)
-      await fillInput(INPUT_LABELS.password, CREDENTIALS.password)
-      await fillInput(INPUT_LABELS.passwordRepeat, CREDENTIALS.passwordRepeat)
-      button = screen.getByRole('button', signUpButtonSelector)
-      user = userEvent.setup()
+    beforeAll(() => server.listen())
+    afterAll(() => server.close())
+    afterEach(() => server.resetHandlers())
+    beforeEach(() => {
       counter = 0
     })
 
-    it('enables button', () => {
+    it('enables button', async () => {
+      const {
+        elements: {button},
+      } = await renderSignUpForm()
+
       expect(button).toBeEnabled()
     })
 
     describe('when user submits the form', () => {
       it('sends username, email, and password to the backend', async () => {
-        await user.click(button)
+        const {
+          user,
+          elements: {button},
+        } = await renderSignUpForm()
+
+        await clickButton(user, button)
         await waitFor(() => {
           expect(requestBody).toEqual({
             username: CREDENTIALS.username,
@@ -114,8 +134,13 @@ describe('SignUp Component', () => {
       })
       describe('when there is an ongoing API call', () => {
         it('does not allow clicking the button', async () => {
-          user.click(button)
-          user.click(button)
+          const {
+            user,
+            elements: {button},
+          } = await renderSignUpForm()
+
+          await clickButton(user, button)
+          await clickButton(user, button)
           await waitFor(() => {
             expect(counter).toBe(1)
           })
