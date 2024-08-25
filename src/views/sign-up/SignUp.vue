@@ -32,10 +32,7 @@ const isDisabledComputed = computed(() => {
 })
 
 const submit = () => {
-  axios.post('/api/v1/users', {
-    username: formState.username,
-    email: formState.email,
-    password: formState.password,
-  })
+  const {passwordRepeat, ...body} = formState
+  axios.post('/api/v1/users', body)
 }
 </script>

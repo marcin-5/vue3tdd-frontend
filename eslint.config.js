@@ -18,6 +18,7 @@ export default [
       semi: ['warn', 'never'],
       quotes: ['warn', 'single'],
       'eol-last': ['warn', 'always'],
+      'no-unused-vars': ['error', {ignoreRestSiblings: true}],
     },
   },
   pluginJs.configs.recommended,
