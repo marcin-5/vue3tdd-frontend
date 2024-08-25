@@ -28,10 +28,12 @@ const expectPasswordInputType = (label) => {
 
 const signUpButtonSelector = {name: SIGN_UP_BUTTON_LABEL}
 
-let requestBody
+let counter, requestBody
+
 const server = setupServer(
   http.post('/api/v1/users', async ({request}) => {
     requestBody = await request.json()
+    counter += 1
     return HttpResponse.json({})
   }),
 )
@@ -83,29 +85,40 @@ describe('SignUp Component', () => {
     expect(screen.getByRole('button', signUpButtonSelector)).toBeDisabled()
   })
 
-  describe('when user submits the form', () => {
-    let button
-
+  describe('when user sets same value for password inputs', () => {
+    let button, user
     beforeEach(async () => {
       await fillInput(INPUT_LABELS.username, CREDENTIALS.username)
       await fillInput(INPUT_LABELS.email, CREDENTIALS.email)
       await fillInput(INPUT_LABELS.password, CREDENTIALS.password)
       await fillInput(INPUT_LABELS.passwordRepeat, CREDENTIALS.passwordRepeat)
       button = screen.getByRole('button', signUpButtonSelector)
-      const localUser = userEvent.setup()
-      await localUser.click(button)
+      user = userEvent.setup()
+      counter = 0
     })
 
     it('enables button', () => {
       expect(button).toBeEnabled()
     })
 
-    it('sends username, email, and password to the backend', async () => {
-      await waitFor(() => {
-        expect(requestBody).toEqual({
-          username: CREDENTIALS.username,
-          email: CREDENTIALS.email,
-          password: CREDENTIALS.password,
+    describe('when user submits the form', () => {
+      it('sends username, email, and password to the backend', async () => {
+        await user.click(button)
+        await waitFor(() => {
+          expect(requestBody).toEqual({
+            username: CREDENTIALS.username,
+            email: CREDENTIALS.email,
+            password: CREDENTIALS.password,
+          })
+        })
+      })
+      describe('when there is an ongoing API call', () => {
+        it('does not allow clicking the button', async () => {
+          user.click(button)
+          user.click(button)
+          await waitFor(() => {
+            expect(counter).toBe(1)
+          })
         })
       })
     })

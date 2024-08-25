@@ -27,7 +27,9 @@
           />
         </div>
         <div class="text-center">
-          <button class="btn btn-primary" :disabled="isDisabledComputed">Sign Up</button>
+          <button class="btn btn-primary" :disabled="isDisabledComputed || apiProgress">
+            Sign Up
+          </button>
         </div>
       </div>
     </form>
@@ -35,7 +37,7 @@
 </template>
 
 <script setup>
-import {computed, reactive} from 'vue'
+import {computed, reactive, ref} from 'vue'
 import axios from 'axios'
 
 const formState = reactive({email: '', username: '', password: '', passwordRepeat: ''})
@@ -46,7 +48,10 @@ const isDisabledComputed = computed(() => {
     : true
 })
 
+const apiProgress = ref(false)
+
 const submit = () => {
+  apiProgress.value = true
   const {passwordRepeat, ...body} = formState
   axios.post('/api/v1/users', body)
 }
