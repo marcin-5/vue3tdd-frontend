@@ -34,6 +34,7 @@
         </div>
       </div>
     </form>
+    <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
   </div>
 </template>
 
@@ -50,10 +51,12 @@ const isDisabledComputed = computed(() => {
 })
 
 const apiProgress = ref(false)
+const successMessage = ref()
 
-const submit = () => {
+const submit = async () => {
   apiProgress.value = true
   const {passwordRepeat, ...body} = formState
-  axios.post('/api/v1/users', body)
+  const response = await axios.post('/api/v1/users', body)
+  successMessage.value = response.data.message
 }
 </script>

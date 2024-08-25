@@ -43,6 +43,7 @@ describe('Sign Up', () => {
   describe('when user sets same value for password inputs', () => {
     describe('when user submits form', () => {
       it('sends username, email, and password to the backend', async () => {
+        axios.post.mockResolvedValue({data: {}})
         const {
           user,
           elements: {button},
