@@ -13,6 +13,10 @@ afterEach(() => {
   vi.clearAllMocks()
 })
 
+const API_ENDPOINT = '/api/v1/users'
+const SUCCESS_MESSAGE = 'User create success'
+const ERROR_MESSAGE = 'Unexpected error occurred, please try again'
+
 const fillFormFields = async (user) => {
   const usernameInput = screen.getByLabelText(INPUT_LABELS.username)
   const emailInput = screen.getByLabelText(INPUT_LABELS.email)
@@ -39,17 +43,22 @@ const clickButton = async (user, button) => {
   await user.click(button)
 }
 
+async function setupAndClickButton(clickCount = 1) {
+  const {
+    user,
+    elements: {button},
+  } = await renderSignUpForm()
+  while (clickCount-- > 0) await clickButton(user, button)
+  return {user, button}
+}
+
 describe('Sign Up', () => {
   describe('when user sets same value for password inputs', () => {
     describe('when user submits form', () => {
       it('sends username, email, and password to the backend', async () => {
         axios.post.mockResolvedValue({data: {}})
-        const {
-          user,
-          elements: {button},
-        } = await renderSignUpForm()
-        await clickButton(user, button)
-        expect(axios.post).toHaveBeenCalledWith('/api/v1/users', {
+        await setupAndClickButton()
+        expect(axios.post).toHaveBeenCalledWith(API_ENDPOINT, {
           username: CREDENTIALS.username,
           email: CREDENTIALS.email,
           password: CREDENTIALS.password,
@@ -62,45 +71,32 @@ describe('Sign Up', () => {
         axios.post.mockImplementation(
           () => new Promise((resolve) => setTimeout(() => resolve({data: {}}), 1000)),
         )
-        const {
-          user,
-          elements: {button},
-        } = await renderSignUpForm()
-        await clickButton(user, button)
-        await clickButton(user, button)
+        await setupAndClickButton(2)
         expect(axios.post).toHaveBeenCalledTimes(1)
       })
+
       it('displays spinner', async () => {
         axios.post.mockImplementation(
           () => new Promise((resolve) => setTimeout(() => resolve({data: {}}), 1000)),
         )
-        const {
-          user,
-          elements: {button},
-        } = await renderSignUpForm()
-        await clickButton(user, button)
+        await setupAndClickButton()
         expect(screen.getByRole('status')).toBeInTheDocument()
       })
     })
 
     describe('when success response is received', () => {
       beforeEach(() => {
-        axios.post.mockResolvedValue({data: {message: 'User create success'}})
+        axios.post.mockResolvedValue({data: {message: SUCCESS_MESSAGE}})
       })
+
       it('displays message received from backend', async () => {
-        const {
-          user,
-          elements: {button},
-        } = await renderSignUpForm()
-        await clickButton(user, button)
-        const text = await screen.findByText('User create success')
-        expect(text).toBeInTheDocument()
+        await setupAndClickButton()
+        const successMessage = await screen.findByText(SUCCESS_MESSAGE)
+        expect(successMessage).toBeInTheDocument()
       })
+
       it('hides sign up form', async () => {
-        const {
-          user,
-          elements: {button},
-        } = await renderSignUpForm()
+        const {user, button} = await setupAndClickButton(0)
         const form = screen.getByTestId('sign-up-form')
         await clickButton(user, button)
         await waitFor(() => {
@@ -113,21 +109,15 @@ describe('Sign Up', () => {
       beforeEach(() => {
         axios.post.mockRejectedValue({})
       })
+
       it('displays generic message', async () => {
-        const {
-          user,
-          elements: {button},
-        } = await renderSignUpForm()
-        await clickButton(user, button)
-        const text = await screen.findByText('Unexpected error occurred, please try again')
-        expect(text).toBeInTheDocument()
+        await setupAndClickButton()
+        const errorMessage = await screen.findByText(ERROR_MESSAGE)
+        expect(errorMessage).toBeInTheDocument()
       })
+
       it('hides spinner', async () => {
-        const {
-          user,
-          elements: {button},
-        } = await renderSignUpForm()
-        await clickButton(user, button)
+        await setupAndClickButton()
         await waitFor(() => {
           expect(screen.queryByRole('status')).not.toBeInTheDocument()
         })
