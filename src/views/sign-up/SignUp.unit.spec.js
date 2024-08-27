@@ -69,6 +69,17 @@ describe('Sign Up', () => {
         await clickButton(user, button)
         expect(axios.post).toHaveBeenCalledTimes(1)
       })
+      it('displays spinner', async () => {
+        axios.post.mockImplementation(
+          () => new Promise((resolve) => setTimeout(() => resolve({data: {}}), 1000)),
+        )
+        const {
+          user,
+          elements: {button},
+        } = await renderSignUpForm()
+        await clickButton(user, button)
+        expect(screen.getByRole('status')).toBeInTheDocument()
+      })
     })
   })
 })
