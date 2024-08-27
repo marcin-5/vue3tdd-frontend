@@ -58,6 +58,9 @@ describe('Sign Up', () => {
     })
     describe('when there is an ongoing API call', () => {
       it('does not allow clicking the button again', async () => {
+        axios.post.mockImplementation(
+          () => new Promise((resolve) => setTimeout(() => resolve({data: {}}), 1000)),
+        )
         const {
           user,
           elements: {button},
