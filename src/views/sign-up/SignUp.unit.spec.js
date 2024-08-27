@@ -123,5 +123,17 @@ describe('Sign Up', () => {
         })
       })
     })
+
+    describe('when user submits again', () => {
+      it('hides error when api request is in progress', async () => {
+        axios.post.mockRejectedValueOnce({}).mockResolvedValue({data: {}})
+        const {user, button} = await setupAndClickButton()
+        const errorMessage = await screen.findByText(ERROR_MESSAGE)
+        await clickButton(user, button)
+        await waitFor(() => {
+          expect(errorMessage).not.toBeInTheDocument()
+        })
+      })
+    })
   })
 })
