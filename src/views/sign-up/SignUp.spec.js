@@ -206,7 +206,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
             elements: {button},
           } = await renderSignUpForm()
           await user.click(button)
-          const text = await screen.findByText('Unexpected error occured, please try again')
+          const text = await screen.findByText('Unexpected error occurred, please try again')
           expect(text).toBeInTheDocument()
         })
         it('hides spinner', async () => {
@@ -239,7 +239,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
                 elements: {button},
               } = await renderSignUpForm()
               await user.click(button)
-              const text = await screen.findByText('Unexpected error occured, please try again')
+              const text = await screen.findByText('Unexpected error occurred, please try again')
               await user.click(button)
               await waitFor(() => {
                 expect(text).not.toBeInTheDocument()

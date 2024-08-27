@@ -63,7 +63,7 @@ const submit = async () => {
     const response = await axios.post('/api/v1/users', body)
     successMessage.value = response.data.message
   } catch {
-    errorMessage.value = 'Unexpected error occured, please try again'
+    errorMessage.value = 'Unexpected error occurred, please try again'
   } finally {
     apiProgress.value = false
   }
