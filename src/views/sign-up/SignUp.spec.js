@@ -39,7 +39,6 @@ const server = setupServer(
   http.post('/api/v1/users', async ({request}) => {
     requestBody = await request.json()
     counter += 1
-    await delay()
     return HttpResponse.json({message: 'User create success'})
   }),
 )
@@ -157,6 +156,12 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           })
         })
         it('displays spinner', async () => {
+          server.use(
+            http.post('/api/v1/users', async () => {
+              await delay('infinite')
+              return HttpResponse.json()
+            }),
+          )
           const {
             user,
             elements: {button},
