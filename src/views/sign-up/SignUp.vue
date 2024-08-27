@@ -63,6 +63,8 @@ const submit = async () => {
     successMessage.value = response.data.message
   } catch {
     errorMessage.value = 'Unexpected error occured, please try again'
+  } finally {
+    apiProgress.value = false
   }
 }
 </script>
