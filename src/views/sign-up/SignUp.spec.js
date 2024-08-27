@@ -4,7 +4,14 @@ import {render, screen, waitFor} from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import SignUp from './SignUp.vue'
 import {setupServer} from 'msw/node'
-import {CREDENTIALS, INPUT_LABELS, SIGN_UP_BUTTON_LABEL} from './SignUpTestConstants'
+import {
+  API_ENDPOINT,
+  CREDENTIALS,
+  ERROR_MESSAGE,
+  INPUT_LABELS,
+  SIGN_UP_BUTTON_LABEL,
+  SUCCESS_MESSAGE,
+} from './SignUpTestConstants'
 
 // Utility functions
 const fillInput = async (label, value) => {
@@ -33,13 +40,22 @@ const clickButton = async (user, button) => {
   await user.click(button)
 }
 
+async function setupAndClickButton(clickCount = 1) {
+  const {
+    user,
+    elements: {button},
+  } = await renderSignUpForm()
+  while (clickCount-- > 0) await clickButton(user, button)
+  return {user, button}
+}
+
 let counter, requestBody
 
 const server = setupServer(
-  http.post('/api/v1/users', async ({request}) => {
+  http.post(API_ENDPOINT, async ({request}) => {
     requestBody = await request.json()
     counter += 1
-    return HttpResponse.json({message: 'User create success'})
+    return HttpResponse.json({message: SUCCESS_MESSAGE})
   }),
 )
 
@@ -128,12 +144,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
 
     describe('Form Submission', () => {
       it('sends username, email, and password to the backend', async () => {
-        const {
-          user,
-          elements: {button},
-        } = await renderSignUpForm()
-
-        await clickButton(user, button)
+        await setupAndClickButton()
         await waitFor(() => {
           expect(requestBody).toEqual({
             username: CREDENTIALS.username,
@@ -144,51 +155,32 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
       })
       describe('when there is an ongoing API call', () => {
         it('does not allow clicking the button', async () => {
-          const {
-            user,
-            elements: {button},
-          } = await renderSignUpForm()
-
-          await clickButton(user, button)
-          await clickButton(user, button)
+          await setupAndClickButton(2)
           await waitFor(() => {
             expect(counter).toBe(1)
           })
         })
         it('displays spinner', async () => {
           server.use(
-            http.post('/api/v1/users', async () => {
+            http.post(API_ENDPOINT, async () => {
               await delay('infinite')
               return HttpResponse.json()
             }),
           )
-          const {
-            user,
-            elements: {button},
-          } = await renderSignUpForm()
-
-          await clickButton(user, button)
+          await setupAndClickButton()
           expect(screen.getByRole('status')).toBeInTheDocument()
         })
       })
       describe('when success response is received', () => {
         it('displays message received from backend', async () => {
-          const {
-            user,
-            elements: {button},
-          } = await renderSignUpForm()
-
-          await clickButton(user, button)
-          const text = await screen.findByText('User create success')
+          await setupAndClickButton()
+          const text = await screen.findByText(SUCCESS_MESSAGE)
           expect(text).toBeInTheDocument()
         })
         it('hides sign up form', async () => {
-          const {
-            user,
-            elements: {button},
-          } = await renderSignUpForm()
+          const {user, button} = await setupAndClickButton(0)
           const form = screen.getByTestId('sign-up-form')
-          await user.click(button)
+          clickButton(user, button)
           await waitFor(() => {
             expect(form).not.toBeInTheDocument()
           })
@@ -197,29 +189,21 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
       describe('when network failure occurs', () => {
         it('displays generic message', async () => {
           server.use(
-            http.post('/api/v1/users', async () => {
+            http.post(API_ENDPOINT, async () => {
               return HttpResponse.error()
             }),
           )
-          const {
-            user,
-            elements: {button},
-          } = await renderSignUpForm()
-          await user.click(button)
-          const text = await screen.findByText('Unexpected error occurred, please try again')
+          await setupAndClickButton()
+          const text = await screen.findByText(ERROR_MESSAGE)
           expect(text).toBeInTheDocument()
         })
         it('hides spinner', async () => {
           server.use(
-            http.post('/api/v1/users', async () => {
+            http.post(API_ENDPOINT, async () => {
               return HttpResponse.error()
             }),
           )
-          const {
-            user,
-            elements: {button},
-          } = await renderSignUpForm()
-          await user.click(button)
+          await setupAndClickButton()
           await waitFor(() => {
             expect(screen.queryByRole('status')).not.toBeInTheDocument()
           })
@@ -227,20 +211,16 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
             it('hides error when api request in progress', async () => {
               let processedFirstRequest = false
               server.use(
-                http.post('/api/v1/users', async () => {
+                http.post(API_ENDPOINT, async () => {
                   if (!processedFirstRequest) {
                     processedFirstRequest = true
                     return HttpResponse.error()
                   } else return HttpResponse.json({})
                 }),
               )
-              const {
-                user,
-                elements: {button},
-              } = await renderSignUpForm()
-              await user.click(button)
-              const text = await screen.findByText('Unexpected error occurred, please try again')
-              await user.click(button)
+              const {user, button} = await setupAndClickButton()
+              const text = await screen.findByText(ERROR_MESSAGE)
+              await clickButton(user, button)
               await waitFor(() => {
                 expect(text).not.toBeInTheDocument()
               })
