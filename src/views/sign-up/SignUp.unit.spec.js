@@ -1,8 +1,8 @@
-import {render, screen} from '@testing-library/vue'
+import {render, screen, waitFor} from '@testing-library/vue'
 import SignUp from './SignUp.vue'
 import userEvent from '@testing-library/user-event'
 import axios from 'axios'
-import {afterEach, vi} from 'vitest'
+import {afterEach, beforeEach, vi} from 'vitest'
 import {CREDENTIALS, INPUT_LABELS, SIGN_UP_BUTTON_LABEL} from './SignUpTestConstants'
 
 // Mock axios
@@ -56,6 +56,7 @@ describe('Sign Up', () => {
         })
       })
     })
+
     describe('when there is an ongoing API call', () => {
       it('does not allow clicking the button again', async () => {
         axios.post.mockImplementation(
@@ -79,6 +80,32 @@ describe('Sign Up', () => {
         } = await renderSignUpForm()
         await clickButton(user, button)
         expect(screen.getByRole('status')).toBeInTheDocument()
+      })
+    })
+
+    describe('when success response is received', () => {
+      beforeEach(() => {
+        axios.post.mockResolvedValue({data: {message: 'User create success'}})
+      })
+      it('displays message received from backend', async () => {
+        const {
+          user,
+          elements: {button},
+        } = await renderSignUpForm()
+        await clickButton(user, button)
+        const text = await screen.findByText('User create success')
+        expect(text).toBeInTheDocument()
+      })
+      it('hides sign up form', async () => {
+        const {
+          user,
+          elements: {button},
+        } = await renderSignUpForm()
+        const form = screen.getByTestId('sign-up-form')
+        await clickButton(user, button)
+        await waitFor(() => {
+          expect(form).not.toBeInTheDocument()
+        })
       })
     })
   })
