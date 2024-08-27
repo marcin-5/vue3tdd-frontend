@@ -57,7 +57,8 @@ const clickButton = async (user, button) => {
   await user.click(button)
 }
 
-describe('SignUp Component', () => {
+// Tests for initial render and static elements
+describe('SignUp Component Initialization Tests', () => {
   beforeEach(() => {
     render(SignUp)
   })
@@ -103,7 +104,10 @@ describe('SignUp Component', () => {
   it('does not display spinner', () => {
     expect(screen.queryByRole('status', signUpButtonSelector)).not.toBeInTheDocument()
   })
+})
 
+// Tests for user interaction and API integration
+describe('SignUp Component User Interaction and API Integration Tests', () => {
   describe('when user sets same value for password inputs', () => {
     beforeAll(() => server.listen())
     afterAll(() => server.close())
