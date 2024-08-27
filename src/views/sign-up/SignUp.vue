@@ -34,7 +34,7 @@
         </div>
       </div>
     </form>
-    <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
+    <div v-else class="alert alert-success">{{ successMessage }}</div>
   </div>
 </template>
 
