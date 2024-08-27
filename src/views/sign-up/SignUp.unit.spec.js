@@ -2,7 +2,7 @@ import {render, screen, waitFor} from '@testing-library/vue'
 import SignUp from './SignUp.vue'
 import userEvent from '@testing-library/user-event'
 import axios from 'axios'
-import {afterEach, beforeEach, vi} from 'vitest'
+import {afterEach, beforeEach, expect, vi} from 'vitest'
 import {
   API_ENDPOINT,
   CREDENTIALS,
@@ -137,6 +137,24 @@ describe('Sign Up', () => {
           expect(errorMessage).not.toBeInTheDocument()
         })
       })
+    })
+  })
+
+  describe('when username is invalid', () => {
+    it('displays validation errors', async () => {
+      axios.post.mockRejectedValue({
+        response: {
+          status: 400,
+          data: {
+            validationErrors: {
+              username: 'Invalid username',
+            },
+          },
+        },
+      })
+      await setupAndClickButton()
+      const validationError = await screen.findByText('Invalid username')
+      expect(validationError).toBeInTheDocument()
     })
   })
 })
