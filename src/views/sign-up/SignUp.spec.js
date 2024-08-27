@@ -6,6 +6,7 @@ import SignUp from './SignUp.vue'
 import {setupServer} from 'msw/node'
 import {CREDENTIALS, INPUT_LABELS, SIGN_UP_BUTTON_LABEL} from './SignUpTestConstants'
 
+// Utility functions
 const fillInput = async (label, value) => {
   const input = screen.getByLabelText(label)
   const localUser = userEvent.setup()
@@ -28,6 +29,10 @@ const expectPasswordInputType = (label) => {
 
 const signUpButtonSelector = {name: SIGN_UP_BUTTON_LABEL}
 
+const clickButton = async (user, button) => {
+  await user.click(button)
+}
+
 let counter, requestBody
 
 const server = setupServer(
@@ -39,6 +44,7 @@ const server = setupServer(
   }),
 )
 
+// Render function for the form
 const renderSignUpForm = async () => {
   const result = render(SignUp)
   await fillInput(INPUT_LABELS.username, CREDENTIALS.username)
@@ -52,10 +58,6 @@ const renderSignUpForm = async () => {
     user,
     elements: {button},
   }
-}
-
-const clickButton = async (user, button) => {
-  await user.click(button)
 }
 
 // Tests for initial render and static elements
@@ -109,7 +111,7 @@ describe('SignUp Component Initialization Tests', () => {
 
 // Tests for user interaction and API integration
 describe('SignUp Component User Interaction and API Integration Tests', () => {
-  describe('when user sets same value for password inputs', () => {
+  describe('Password Match Validation', () => {
     beforeAll(() => server.listen())
     afterAll(() => server.close())
     afterEach(() => server.resetHandlers())
@@ -117,7 +119,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
       counter = 0
     })
 
-    it('enables button', async () => {
+    it('enables sign up button when passwords match', async () => {
       const {
         elements: {button},
       } = await renderSignUpForm()
@@ -125,7 +127,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
       expect(button).toBeEnabled()
     })
 
-    describe('when user submits the form', () => {
+    describe('Form Submission', () => {
       it('sends username, email, and password to the backend', async () => {
         const {
           user,
