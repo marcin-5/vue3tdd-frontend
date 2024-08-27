@@ -153,6 +153,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           })
         })
       })
+
       describe('when there is an ongoing API call', () => {
         it('does not allow clicking the button', async () => {
           await setupAndClickButton(2)
@@ -160,6 +161,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
             expect(counter).toBe(1)
           })
         })
+
         it('displays spinner', async () => {
           server.use(
             http.post(API_ENDPOINT, async () => {
@@ -171,6 +173,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           expect(screen.getByRole('status')).toBeInTheDocument()
         })
       })
+
       describe('when success response is received', () => {
         it('displays message received from backend', async () => {
           await setupAndClickButton()
@@ -186,6 +189,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           })
         })
       })
+
       describe('when network failure occurs', () => {
         it('displays generic message', async () => {
           server.use(
@@ -197,6 +201,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           const text = await screen.findByText(ERROR_MESSAGE)
           expect(text).toBeInTheDocument()
         })
+
         it('hides spinner', async () => {
           server.use(
             http.post(API_ENDPOINT, async () => {
@@ -207,6 +212,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           await waitFor(() => {
             expect(screen.queryByRole('status')).not.toBeInTheDocument()
           })
+
           describe('when user submits again', async () => {
             it('hides error when api request in progress', async () => {
               let processedFirstRequest = false
