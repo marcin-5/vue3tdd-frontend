@@ -1,6 +1,6 @@
 <template>
   <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2">
-    <form class="card" @submit.prevent="submit">
+    <form class="card" @submit.prevent="submit" data-testid="sign-up-form" v-if="!successMessage">
       <div class="card-header text-center">
         <h1>Sign Up</h1>
       </div>

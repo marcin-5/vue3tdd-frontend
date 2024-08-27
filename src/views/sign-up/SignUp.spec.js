@@ -175,6 +175,17 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           const text = await screen.findByText('User create success')
           expect(text).toBeInTheDocument()
         })
+        it('hides sign up form', async () => {
+          const {
+            user,
+            elements: {button},
+          } = await renderSignUpForm()
+          const form = screen.getByTestId('sign-up-form')
+          await user.click(button)
+          await waitFor(() => {
+            expect(form).not.toBeInTheDocument()
+          })
+        })
       })
     })
   })
