@@ -1,4 +1,4 @@
-import {http, HttpResponse} from 'msw'
+import {delay, http, HttpResponse} from 'msw'
 import {afterAll, afterEach, beforeAll, beforeEach} from 'vitest'
 import {render, screen, waitFor} from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
@@ -34,18 +34,19 @@ const server = setupServer(
   http.post('/api/v1/users', async ({request}) => {
     requestBody = await request.json()
     counter += 1
+    await delay()
     return HttpResponse.json({message: 'User create success'})
   }),
 )
 
 const renderSignUpForm = async () => {
+  const result = render(SignUp)
   await fillInput(INPUT_LABELS.username, CREDENTIALS.username)
   await fillInput(INPUT_LABELS.email, CREDENTIALS.email)
   await fillInput(INPUT_LABELS.password, CREDENTIALS.password)
   await fillInput(INPUT_LABELS.passwordRepeat, CREDENTIALS.passwordRepeat)
   const button = screen.getByRole('button', signUpButtonSelector)
   const user = userEvent.setup()
-  const result = render(SignUp)
   return {
     ...result,
     user,
