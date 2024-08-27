@@ -3,7 +3,14 @@ import SignUp from './SignUp.vue'
 import userEvent from '@testing-library/user-event'
 import axios from 'axios'
 import {afterEach, beforeEach, vi} from 'vitest'
-import {CREDENTIALS, INPUT_LABELS, SIGN_UP_BUTTON_LABEL} from './SignUpTestConstants'
+import {
+  API_ENDPOINT,
+  CREDENTIALS,
+  ERROR_MESSAGE,
+  INPUT_LABELS,
+  SIGN_UP_BUTTON_LABEL,
+  SUCCESS_MESSAGE,
+} from './SignUpTestConstants'
 
 // Mock axios
 vi.mock('axios')
@@ -12,10 +19,6 @@ vi.mock('axios')
 afterEach(() => {
   vi.clearAllMocks()
 })
-
-const API_ENDPOINT = '/api/v1/users'
-const SUCCESS_MESSAGE = 'User create success'
-const ERROR_MESSAGE = 'Unexpected error occurred, please try again'
 
 const fillFormFields = async (user) => {
   const usernameInput = screen.getByLabelText(INPUT_LABELS.username)

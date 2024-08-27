@@ -13,3 +13,7 @@ export const CREDENTIALS = {
   password: 'P4ssword',
   passwordRepeat: 'P4ssword',
 }
+
+export const API_ENDPOINT = '/api/v1/users'
+export const SUCCESS_MESSAGE = 'User create success'
+export const ERROR_MESSAGE = 'Unexpected error occurred, please try again'
