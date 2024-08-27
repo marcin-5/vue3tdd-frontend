@@ -26,6 +26,7 @@
             v-model="formState.passwordRepeat"
           />
         </div>
+        <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
         <div class="text-center">
           <button class="btn btn-primary" :disabled="isDisabledComputed || apiProgress">
             <span v-if="apiProgress" role="status" class="spinner-border spinner-border-sm"></span>
@@ -52,11 +53,16 @@ const isDisabledComputed = computed(() => {
 
 const apiProgress = ref(false)
 const successMessage = ref()
+const errorMessage = ref()
 
 const submit = async () => {
   apiProgress.value = true
   const {passwordRepeat, ...body} = formState
-  const response = await axios.post('/api/v1/users', body)
-  successMessage.value = response.data.message
+  try {
+    const response = await axios.post('/api/v1/users', body)
+    successMessage.value = response.data.message
+  } catch {
+    errorMessage.value = 'Unexpected error occured, please try again'
+  }
 }
 </script>
