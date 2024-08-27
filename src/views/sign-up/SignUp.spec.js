@@ -194,6 +194,22 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           })
         })
       })
+      describe('when network failure occurs', () => {
+        it('displays generic message', async () => {
+          server.use(
+            http.post('/api/v1/users', async () => {
+              return HttpResponse.error()
+            }),
+          )
+          const {
+            user,
+            elements: {button},
+          } = await renderSignUpForm()
+          await user.click(button)
+          const text = await screen.findByText('Unexpected error occured, please try again')
+          expect(text).toBeInTheDocument()
+        })
+      })
     })
   })
 })
