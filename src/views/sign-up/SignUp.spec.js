@@ -1,5 +1,5 @@
 import {delay, http, HttpResponse} from 'msw'
-import {afterAll, afterEach, beforeAll, beforeEach} from 'vitest'
+import {afterAll, afterEach, beforeAll, beforeEach, expect} from 'vitest'
 import {render, screen, waitFor} from '@testing-library/vue'
 import userEvent from '@testing-library/user-event'
 import SignUp from './SignUp.vue'
@@ -222,6 +222,29 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           await user.click(button)
           await waitFor(() => {
             expect(screen.queryByRole('status')).not.toBeInTheDocument()
+          })
+          describe('when user submits again', async () => {
+            it('hides error when api request in progress', async () => {
+              let processedFirstRequest = false
+              server.use(
+                http.post('/api/v1/users', async () => {
+                  if (!processedFirstRequest) {
+                    processedFirstRequest = true
+                    return HttpResponse.error()
+                  } else return HttpResponse.json({})
+                }),
+              )
+              const {
+                user,
+                elements: {button},
+              } = await renderSignUpForm()
+              await user.click(button)
+              const text = await screen.findByText('Unexpected error occured, please try again')
+              await user.click(button)
+              await waitFor(() => {
+                expect(text).not.toBeInTheDocument()
+              })
+            })
           })
         })
       })

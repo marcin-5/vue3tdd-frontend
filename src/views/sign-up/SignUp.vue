@@ -57,6 +57,7 @@ const errorMessage = ref()
 
 const submit = async () => {
   apiProgress.value = true
+  errorMessage.value = undefined
   const {passwordRepeat, ...body} = formState
   try {
     const response = await axios.post('/api/v1/users', body)
