@@ -108,5 +108,30 @@ describe('Sign Up', () => {
         })
       })
     })
+
+    describe('when network failure occurs', () => {
+      beforeEach(() => {
+        axios.post.mockRejectedValue({})
+      })
+      it('displays generic message', async () => {
+        const {
+          user,
+          elements: {button},
+        } = await renderSignUpForm()
+        await clickButton(user, button)
+        const text = await screen.findByText('Unexpected error occurred, please try again')
+        expect(text).toBeInTheDocument()
+      })
+      it('hides spinner', async () => {
+        const {
+          user,
+          elements: {button},
+        } = await renderSignUpForm()
+        await clickButton(user, button)
+        await waitFor(() => {
+          expect(screen.queryByRole('status')).not.toBeInTheDocument()
+        })
+      })
+    })
   })
 })
