@@ -1,7 +1,12 @@
 <template>
   <div :class="classes.wrapper">
     <label :class="classes.label" :for="id">{{ label }}</label>
-    <input :class="[classes.input, {' is-invalid': errorMessage}]" :id="id" @input="onInput" />
+    <input
+      :class="[classes.input, {' is-invalid': errorMessage}]"
+      :id="id"
+      :type="type"
+      @input="onInput"
+    />
     <span :class="[classes.span, {' invalid-feedback': errorMessage}]">{{ errorMessage }}</span>
   </div>
 </template>
@@ -21,6 +26,10 @@ defineProps({
   id: {
     type: String,
     required: true,
+  },
+  type: {
+    type: String,
+    default: 'text',
   },
   errorMessage: String,
   modelValue: String,
