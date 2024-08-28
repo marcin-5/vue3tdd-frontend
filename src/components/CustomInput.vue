@@ -1,15 +1,16 @@
 <template>
-  <div :class="inputWrapperClass">
-    <label :class="labelClass" :for="id">{{ label }}</label>
-    <input :class="inputClass" :id="id" @input="handleInput" />
+  <div :class="classes.wrapper">
+    <label :class="classes.label" :for="id">{{ label }}</label>
+    <input :class="classes.input" :id="id" @input="onInput" />
     <span>{{ errorMessage }}</span>
   </div>
 </template>
-
 <script setup>
-const inputWrapperClass = 'mb-3'
-const labelClass = 'form-label'
-const inputClass = 'form-control'
+const classes = {
+  wrapper: 'mb-3',
+  label: 'form-label',
+  input: 'form-control',
+}
 
 defineProps({
   label: {
@@ -21,11 +22,12 @@ defineProps({
     required: true,
   },
   errorMessage: String,
+  modelValue: String,
 })
 
-const emit = defineEmits(['customInput'])
+const emit = defineEmits(['update:modelValue'])
 
-function handleInput(event) {
-  emit('customInput', event.target.value)
+function onInput(event) {
+  emit('update:modelValue', event.target.value)
 }
 </script>
