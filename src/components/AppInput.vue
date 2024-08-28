@@ -1,8 +1,8 @@
 <template>
   <div :class="classes.wrapper">
     <label :class="classes.label" :for="id">{{ label }}</label>
-    <input :class="classes.input" :id="id" @input="onInput" />
-    <span>{{ errorMessage }}</span>
+    <input :class="[classes.input, {' is-invalid': errorMessage}]" :id="id" @input="onInput" />
+    <span :class="[classes.span, {' invalid-feedback': errorMessage}]">{{ errorMessage }}</span>
   </div>
 </template>
 <script setup>
@@ -10,6 +10,7 @@ const classes = {
   wrapper: 'mb-3',
   label: 'form-label',
   input: 'form-control',
+  span: '',
 }
 
 defineProps({
