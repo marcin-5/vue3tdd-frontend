@@ -140,20 +140,22 @@ describe('Sign Up', () => {
     })
   })
 
-  describe('when username is invalid', () => {
-    it('displays validation errors', async () => {
+  describe.each([
+    {field: 'username', message: 'Invalid username'},
+    {field: 'email', message: 'Invalid email'},
+    {field: 'password', message: 'Invalid password'},
+  ])('when $field is invalid', ({field, message}) => {
+    it(`displays ${message}`, async () => {
       axios.post.mockRejectedValue({
         response: {
           status: 400,
           data: {
-            validationErrors: {
-              username: 'Invalid username',
-            },
+            validationErrors: {[field]: message},
           },
         },
       })
       await setupAndClickButton()
-      const validationError = await screen.findByText('Invalid username')
+      const validationError = await screen.findByText(message)
       expect(validationError).toBeInTheDocument()
     })
   })
