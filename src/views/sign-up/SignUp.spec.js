@@ -234,25 +234,22 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           })
         })
       })
-      describe('when username is invalid', () => {
-        it('displays validation errors', async () => {
-          server.use(
-            http.post(API_ENDPOINT, () => {
-              return HttpResponse.json(
-                {
-                  validationErrors: {
-                    username: 'Invalid username',
-                  },
-                },
-                {status: 400},
-              )
-            }),
-          )
-          await setupAndClickButton()
-          const validationError = await screen.findByText('Invalid username')
-          expect(validationError).toBeInTheDocument()
-        })
-      })
+
+      describe.each([{field: 'username', message: 'Invalid username'}])(
+        'when $field is invalid',
+        ({field, message}) => {
+          it(`displays ${message}`, async () => {
+            server.use(
+              http.post(API_ENDPOINT, () => {
+                return HttpResponse.json({validationErrors: {[field]: message}}, {status: 400})
+              }),
+            )
+            await setupAndClickButton()
+            const validationError = await screen.findByText(message)
+            expect(validationError).toBeInTheDocument()
+          })
+        },
+      )
     })
   })
 })
