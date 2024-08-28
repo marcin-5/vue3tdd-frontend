@@ -11,14 +11,20 @@
           :error-message="errors.username"
           v-model="formState.username"
         />
-        <div class="mb-3">
-          <label class="form-label" for="email">Email</label>
-          <input class="form-control" id="email" v-model="formState.email" />
-        </div>
-        <div class="mb-3">
-          <label class="form-label" for="password">Password</label>
-          <input class="form-control" id="password" type="password" v-model="formState.password" />
-        </div>
+        <AppInput
+          id="email"
+          type="email"
+          label="Email"
+          :error-message="errors.email"
+          v-model="formState.email"
+        />
+        <AppInput
+          id="password"
+          type="password"
+          label="Password"
+          :error-message="errors.password"
+          v-model="formState.password"
+        />
         <div class="mb-3">
           <label class="form-label" for="passwordRepeat">Password repeat</label>
           <input
