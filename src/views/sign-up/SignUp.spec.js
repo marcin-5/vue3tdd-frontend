@@ -63,8 +63,8 @@ const server = setupServer(
 // Render function for the form
 const renderSignUpForm = async () => {
   const result = render(SignUp)
-  await fillInput(INPUT_LABELS.username, CREDENTIALS.username)
-  await fillInput(INPUT_LABELS.email, CREDENTIALS.email)
+  const usernameInput = await fillInput(INPUT_LABELS.username, CREDENTIALS.username)
+  const emailInput = await fillInput(INPUT_LABELS.email, CREDENTIALS.email)
   const passwordInput = await fillInput(INPUT_LABELS.password, CREDENTIALS.password)
   const passwordRepeatInput = await fillInput(
     INPUT_LABELS.passwordRepeat,
@@ -75,7 +75,7 @@ const renderSignUpForm = async () => {
   return {
     ...result,
     user,
-    elements: {button, passwordInput, passwordRepeatInput},
+    elements: {button, usernameInput, emailInput, passwordInput, passwordRepeatInput},
   }
 }
 
@@ -182,6 +182,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           const text = await screen.findByText(SUCCESS_MESSAGE)
           expect(text).toBeInTheDocument()
         })
+
         it('hides sign up form', async () => {
           const {user, button} = await setupAndClickButton(0)
           const form = screen.getByTestId('sign-up-form')
@@ -251,6 +252,19 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
           await setupAndClickButton()
           const validationError = await screen.findByText(message)
           expect(validationError).toBeInTheDocument()
+        })
+
+        it(`clears error after user updates ${field}`, async () => {
+          server.use(
+            http.post('/api/v1/users', () => {
+              return HttpResponse.json({validationErrors: {[field]: message}}, {status: 400})
+            }),
+          )
+          const {user, elements} = await renderSignUpForm()
+          await clickButton(user, elements.button)
+          const errorMessage = await screen.findByText(message)
+          await user.type(elements[`${field}Input`], 'updated')
+          expect(errorMessage).not.toBeInTheDocument()
         })
       })
     })
