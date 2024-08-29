@@ -7,7 +7,9 @@
       :type="type"
       @input="onInput"
     />
-    <span :class="[classes.span, {' invalid-feedback': errorMessage}]">{{ errorMessage }}</span>
+    <span v-if="errorMessage" :class="[classes.span, {' invalid-feedback': errorMessage}]">{{
+      errorMessage
+    }}</span>
   </div>
 </template>
 <script setup>

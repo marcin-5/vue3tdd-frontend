@@ -51,53 +51,80 @@
 </template>
 
 <script setup>
-import {computed, reactive, ref} from 'vue'
+import {computed, reactive, ref, watch} from 'vue'
 import axios from 'axios'
 import {AppInput} from '@/components'
 
-const formState = reactive({email: '', username: '', password: '', passwordRepeat: ''})
+// Form State
+const formState = reactive({
+  email: '',
+  username: '',
+  password: '',
+  passwordRepeat: '',
+})
 
-const isFormDisabled = computed(() => isPasswordMismatch(formState))
+// Computed Properties
+const isFormDisabled = computed(() => checkPasswordMismatch(formState))
 const passwordError = computed(() => getPasswordMismatchMessage(formState))
 
+// References
 const isLoading = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
 const validationErrors = ref({})
 
-const submitForm = async () => {
-  isLoading.value = true
-  clearMessages()
-
-  try {
-    const {passwordRepeat, ...userData} = formState
-    const response = await axios.post('/api/v1/users', userData)
-    successMessage.value = response.data.message
-  } catch (err) {
-    handleApiError(err)
-  } finally {
-    isLoading.value = false
-  }
-}
-
-function isPasswordMismatch(form) {
+// Helper Functions
+function checkPasswordMismatch(form) {
   return form.password || form.passwordRepeat ? form.password !== form.passwordRepeat : true
 }
 
 function getPasswordMismatchMessage(form) {
-  return form.password !== form.passwordRepeat ? 'Password mismatch' : null
+  return form.password && form.password !== form.passwordRepeat ? 'Password mismatch' : null
 }
 
-function clearMessages() {
+function resetMessages() {
   errorMessage.value = ''
   successMessage.value = ''
 }
 
-function handleApiError(error) {
+function manageApiError(error) {
   if (error.response?.status === 400) {
     validationErrors.value = error.response.data.validationErrors
   } else {
     errorMessage.value = 'Unexpected error occurred, please try again'
   }
 }
+
+function handleClearValidationError(field) {
+  delete validationErrors.value[field]
+}
+
+// Form Submission Function
+const submitForm = async () => {
+  isLoading.value = true
+  resetMessages()
+  try {
+    const {passwordRepeat, ...userData} = formState
+    const response = await axios.post('/api/v1/users', userData)
+    successMessage.value = response.data.message
+  } catch (err) {
+    manageApiError(err)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Watchers for Validation
+watch(
+  () => formState.username,
+  () => handleClearValidationError('username'),
+)
+watch(
+  () => formState.email,
+  () => handleClearValidationError('email'),
+)
+watch(
+  () => formState.password,
+  () => handleClearValidationError('password'),
+)
 </script>
