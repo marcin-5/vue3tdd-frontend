@@ -3,7 +3,7 @@
   "username": "Username",
   "email": "Email",
   "password": "Password",
-  "passwordRepeat": "Password Repeat",
+  "passwordRepeat": "Password repeat",
   "passwordMismatch": "Password mismatch",
   "genericError": "Unexpected error occurred, please try again"
 }
