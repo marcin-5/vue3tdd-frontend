@@ -85,46 +85,32 @@ describe('SignUp Component Initialization Tests', () => {
     render(SignUp)
   })
 
-  it('has Sign Up header', () => {
-    const header = screen.getByRole('heading', signUpButtonSelector)
-    expect(header).toBeInTheDocument()
-  })
+  const tests = {
+    'has Sign Up header': () => {
+      const header = screen.getByRole('heading', signUpButtonSelector)
+      expect(header).toBeInTheDocument()
+    },
+    'has username input': () => expectInputToBeInTheDocument(INPUT_LABELS.username),
+    'has email input': () => expectInputToBeInTheDocument(INPUT_LABELS.email),
+    'has password input': () => expectInputToBeInTheDocument(INPUT_LABELS.password),
+    'has password type for password input': () => expectPasswordInputType(INPUT_LABELS.password),
+    'has password repeat input': () => expectInputToBeInTheDocument(INPUT_LABELS.passwordRepeat),
+    'has password type for password repeat input': () =>
+      expectPasswordInputType(INPUT_LABELS.passwordRepeat),
+    'has sign up button': () => {
+      const button = screen.getByRole('button', signUpButtonSelector)
+      expect(button).toBeInTheDocument()
+    },
+    'disables the button initially': () => {
+      expect(screen.getByRole('button', signUpButtonSelector)).toBeDisabled()
+    },
+    'does not display spinner': () => {
+      expect(screen.queryByRole('status', signUpButtonSelector)).not.toBeInTheDocument()
+    },
+  }
 
-  it('has username input', () => {
-    expectInputToBeInTheDocument(INPUT_LABELS.username)
-  })
-
-  it('has email input', () => {
-    expectInputToBeInTheDocument(INPUT_LABELS.email)
-  })
-
-  it('has password input', () => {
-    expectInputToBeInTheDocument(INPUT_LABELS.password)
-  })
-
-  it('has password type for password input', () => {
-    expectPasswordInputType(INPUT_LABELS.password)
-  })
-
-  it('has password repeat input', () => {
-    expectInputToBeInTheDocument(INPUT_LABELS.passwordRepeat)
-  })
-
-  it('has password type for password repeat input', () => {
-    expectPasswordInputType(INPUT_LABELS.passwordRepeat)
-  })
-
-  it('has sign up button', () => {
-    const button = screen.getByRole('button', signUpButtonSelector)
-    expect(button).toBeInTheDocument()
-  })
-
-  it('disables the button initially', () => {
-    expect(screen.getByRole('button', signUpButtonSelector)).toBeDisabled()
-  })
-
-  it('does not display spinner', () => {
-    expect(screen.queryByRole('status', signUpButtonSelector)).not.toBeInTheDocument()
+  Object.entries(tests).forEach(([description, testFunc]) => {
+    it(description, testFunc)
   })
 })
 
