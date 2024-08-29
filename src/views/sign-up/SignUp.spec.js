@@ -19,6 +19,7 @@ const fillInput = async (label, value) => {
   const localUser = userEvent.setup()
   await clearInput(label)
   await localUser.type(input, value)
+  return input
 }
 
 const clearInput = async (label) => {
@@ -64,14 +65,17 @@ const renderSignUpForm = async () => {
   const result = render(SignUp)
   await fillInput(INPUT_LABELS.username, CREDENTIALS.username)
   await fillInput(INPUT_LABELS.email, CREDENTIALS.email)
-  await fillInput(INPUT_LABELS.password, CREDENTIALS.password)
-  await fillInput(INPUT_LABELS.passwordRepeat, CREDENTIALS.passwordRepeat)
+  const passwordInput = await fillInput(INPUT_LABELS.password, CREDENTIALS.password)
+  const passwordRepeatInput = await fillInput(
+    INPUT_LABELS.passwordRepeat,
+    CREDENTIALS.passwordRepeat,
+  )
   const button = screen.getByRole('button', signUpButtonSelector)
   const user = userEvent.setup()
   return {
     ...result,
     user,
-    elements: {button},
+    elements: {button, passwordInput, passwordRepeatInput},
   }
 }
 
@@ -140,6 +144,18 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
       } = await renderSignUpForm()
 
       expect(button).toBeEnabled()
+    })
+
+    describe('when passwords do not match', () => {
+      it('displays error', async () => {
+        const {
+          user,
+          elements: {passwordInput, passwordRepeatInput},
+        } = await renderSignUpForm()
+        await user.type(passwordInput, '123')
+        await user.type(passwordRepeatInput, '456')
+        expect(screen.getByText('Password mismatch')).toBeInTheDocument()
+      })
     })
 
     describe('Form Submission', () => {
