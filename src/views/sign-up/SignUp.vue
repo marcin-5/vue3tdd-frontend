@@ -114,17 +114,16 @@ const submitForm = async () => {
   }
 }
 
-// Watchers for Validation
-watch(
-  () => formState.username,
-  () => handleClearValidationError('username'),
-)
-watch(
-  () => formState.email,
-  () => handleClearValidationError('email'),
-)
-watch(
-  () => formState.password,
-  () => handleClearValidationError('password'),
-)
+// Function to setup watchers
+function setupValidationWatchers(formState) {
+  Object.keys(formState).forEach((field) => {
+    watch(
+      () => formState[field],
+      () => handleClearValidationError(field),
+    )
+  })
+}
+
+// Setup watchers for validation
+setupValidationWatchers(formState)
 </script>
