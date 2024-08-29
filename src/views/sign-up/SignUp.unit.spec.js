@@ -29,16 +29,21 @@ const fillFormFields = async (user) => {
   await user.type(emailInput, CREDENTIALS.email)
   await user.type(passwordInput, CREDENTIALS.password)
   await user.type(passwordRepeatInput, CREDENTIALS.passwordRepeat)
+  return {
+    usernameInput: usernameInput,
+    emailInput: emailInput,
+    passwordInput: passwordInput,
+  }
 }
 
 const renderSignUpForm = async () => {
   const result = render(SignUp)
   const user = userEvent.setup()
-  await fillFormFields(user)
+  const inputs = await fillFormFields(user)
   return {
     ...result,
     user,
-    elements: {button: screen.getByRole('button', {name: SIGN_UP_BUTTON_LABEL})},
+    elements: {button: screen.getByRole('button', {name: SIGN_UP_BUTTON_LABEL}), ...inputs},
   }
 }
 
@@ -157,6 +162,24 @@ describe('Sign Up', () => {
       await setupAndClickButton()
       const validationError = await screen.findByText(message)
       expect(validationError).toBeInTheDocument()
+    })
+
+    it(`clears error after user updates ${field}`, async () => {
+      axios.post.mockRejectedValue({
+        response: {
+          status: 400,
+          data: {
+            validationErrors: {
+              [field]: message,
+            },
+          },
+        },
+      })
+      const {user, elements} = await renderSignUpForm()
+      await clickButton(user, elements.button)
+      const errorMessage = await screen.findByText(message)
+      await user.type(elements[`${field}Input`], 'updated')
+      expect(errorMessage).not.toBeInTheDocument()
     })
   })
 })
