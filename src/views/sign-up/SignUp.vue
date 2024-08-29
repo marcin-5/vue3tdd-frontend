@@ -25,15 +25,13 @@
           :error-message="errors.password"
           v-model="formState.password"
         />
-        <div class="mb-3">
-          <label class="form-label" for="passwordRepeat">Password repeat</label>
-          <input
-            class="form-control"
-            id="passwordRepeat"
-            type="password"
-            v-model="formState.passwordRepeat"
-          />
-        </div>
+        <AppInput
+          id="passwordRepeat"
+          type="password"
+          label="Password repeat"
+          :error-message="passwordMismatchError"
+          v-model="formState.passwordRepeat"
+        />
         <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
         <div class="text-center">
           <button class="btn btn-primary" :disabled="isDisabledComputed || apiProgress">
@@ -58,6 +56,10 @@ const isDisabledComputed = computed(() => {
   return formState.password || formState.passwordRepeat
     ? formState.password !== formState.passwordRepeat
     : true
+})
+
+const passwordMismatchError = computed(() => {
+  return formState.password !== formState.passwordRepeat ? 'Password mismatch' : null
 })
 
 const apiProgress = ref(false)
