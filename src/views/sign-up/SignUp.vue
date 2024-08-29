@@ -7,33 +7,33 @@
       v-if="!successMessage"
     >
       <div class="card-header text-center">
-        <h1>Sign Up</h1>
+        <h1>{{ $t('signUp') }}</h1>
       </div>
       <div class="card-body">
         <AppInput
           id="username"
-          label="Username"
+          :label="$t('username')"
           :error-message="validationErrors.username"
           v-model="formState.username"
         />
         <AppInput
           id="email"
           type="email"
-          label="Email"
+          :label="$t('email')"
           :error-message="validationErrors.email"
           v-model="formState.email"
         />
         <AppInput
           id="password"
           type="password"
-          label="Password"
+          :label="$t('password')"
           :error-message="validationErrors.password"
           v-model="formState.password"
         />
         <AppInput
           id="passwordRepeat"
           type="password"
-          label="Password repeat"
+          :label="$t('passwordRepeat')"
           :error-message="passwordError"
           v-model="formState.passwordRepeat"
         />
@@ -41,7 +41,7 @@
         <div class="text-center">
           <button class="btn btn-primary" :disabled="isFormDisabled || isLoading">
             <span v-if="isLoading" role="status" class="spinner-border spinner-border-sm"></span>
-            Sign Up
+            {{ $t('signUp') }}
           </button>
         </div>
       </div>
@@ -54,6 +54,9 @@
 import {computed, reactive, ref, watch} from 'vue'
 import axios from 'axios'
 import {AppInput} from '@/components'
+import {useI18n} from 'vue-i18n'
+
+const {t} = useI18n()
 
 // Form State
 const formState = reactive({
@@ -79,7 +82,7 @@ function checkPasswordMismatch(form) {
 }
 
 function getPasswordMismatchMessage(form) {
-  return form.password && form.password !== form.passwordRepeat ? 'Password mismatch' : null
+  return form.password && form.password !== form.passwordRepeat ? t('passwordMismatch') : null
 }
 
 function resetMessages() {
@@ -91,7 +94,7 @@ function manageApiError(error) {
   if (error.response?.status === 400) {
     validationErrors.value = error.response.data.validationErrors
   } else {
-    errorMessage.value = 'Unexpected error occurred, please try again'
+    errorMessage.value = t('genericError')
   }
 }
 

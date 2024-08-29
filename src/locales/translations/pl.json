@@ -1,0 +1,9 @@
+{
+  "signUp": "Zarejestruj się",
+  "username": "Nazwa użytkownika",
+  "email": "Email",
+  "password": "Hasło",
+  "passwordRepeat": "Powtórz hasło",
+  "passwordMismatch": "Hasła nie są takie same",
+  "genericError": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
+}
