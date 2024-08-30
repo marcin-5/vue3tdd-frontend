@@ -1,6 +1,6 @@
 import {delay, http, HttpResponse} from 'msw'
 import {afterAll, afterEach, beforeAll, beforeEach, expect} from 'vitest'
-import {render, screen, waitFor} from '@testing-library/vue'
+import {render, screen, waitFor} from 'test/helper'
 import userEvent from '@testing-library/user-event'
 import SignUp from './SignUp.vue'
 import {setupServer} from 'msw/node'
