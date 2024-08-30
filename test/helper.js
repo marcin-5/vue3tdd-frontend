@@ -1,5 +1,13 @@
-import {i18n} from '@/locales/index.js'
 import {render} from '@testing-library/vue'
+import {createI18n} from 'vue-i18n'
+import en from '@/locales/translations/en.json'
+
+const i18n = createI18n({
+  legacy: false,
+  globalInjection: true,
+  locale: 'en',
+  messages: {en},
+})
 
 const globalOptions = {
   global: {
