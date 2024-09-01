@@ -1,6 +1,5 @@
 import {render, screen} from 'test/helper'
 import LanguageSelector from '../LanguageSelector.vue'
-import userEvent from '@testing-library/user-event'
 
 const LanguageTestComponent = {
   components: {
@@ -20,8 +19,7 @@ const languageTestCases = [
 describe('Language selector', () => {
   describe.each(languageTestCases)('when user selects $language', ({language, text}) => {
     it('displays expected text', async () => {
-      const user = userEvent.setup()
-      render(LanguageTestComponent)
+      const {user} = render(LanguageTestComponent)
       await user.click(screen.getByTestId(`language-${language}-selector`))
       expect(screen.getByText(text)).toBeInTheDocument()
     })

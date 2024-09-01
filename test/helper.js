@@ -2,6 +2,7 @@ import {render} from '@testing-library/vue'
 import {createI18n} from 'vue-i18n'
 import en from '@/locales/translations/en.json'
 import pl from '@/locales/translations/pl.json'
+import userEvent from '@testing-library/user-event'
 
 const i18n = createI18n({
   legacy: false,
@@ -17,10 +18,12 @@ const globalOptions = {
 }
 
 const customRender = (component, options) => {
-  return render(component, {
+  const user = userEvent.setup()
+  const result = render(component, {
     ...globalOptions,
     ...options,
   })
+  return {user, result}
 }
 
 export * from '@testing-library/vue'

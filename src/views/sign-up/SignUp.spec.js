@@ -1,7 +1,6 @@
 import {delay, http, HttpResponse} from 'msw'
 import {afterAll, afterEach, beforeAll, beforeEach, expect} from 'vitest'
 import {render, screen, waitFor} from 'test/helper'
-import userEvent from '@testing-library/user-event'
 import SignUp from './SignUp.vue'
 import {setupServer} from 'msw/node'
 import {
@@ -14,10 +13,9 @@ import {
 } from './SignUpTestConstants'
 
 // Utility functions
-const fillInput = async (label, value) => {
+const fillInput = async (user, label, value) => {
   const input = screen.getByLabelText(label)
-  const localUser = userEvent.setup()
-  await localUser.type(input, value)
+  await user.type(input, value)
   return input
 }
 
@@ -56,16 +54,16 @@ const server = setupServer(
 
 // Render function for the form
 const renderSignUpForm = async () => {
-  const result = render(SignUp)
-  const usernameInput = await fillInput(INPUT_LABELS.username, CREDENTIALS.username)
-  const emailInput = await fillInput(INPUT_LABELS.email, CREDENTIALS.email)
-  const passwordInput = await fillInput(INPUT_LABELS.password, CREDENTIALS.password)
+  const {user, result} = render(SignUp)
+  const usernameInput = await fillInput(user, INPUT_LABELS.username, CREDENTIALS.username)
+  const emailInput = await fillInput(user, INPUT_LABELS.email, CREDENTIALS.email)
+  const passwordInput = await fillInput(user, INPUT_LABELS.password, CREDENTIALS.password)
   const passwordRepeatInput = await fillInput(
+    user,
     INPUT_LABELS.passwordRepeat,
     CREDENTIALS.passwordRepeat,
   )
   const button = screen.getByRole('button', signUpButtonSelector)
-  const user = userEvent.setup()
   return {
     ...result,
     user,
@@ -180,7 +178,7 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
         it('hides sign up form', async () => {
           const {user, button} = await setupAndClickButton(0)
           const form = screen.getByTestId('sign-up-form')
-          clickButton(user, button)
+          await clickButton(user, button)
           await waitFor(() => {
             expect(form).not.toBeInTheDocument()
           })
