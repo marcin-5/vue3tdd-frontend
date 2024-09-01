@@ -2,7 +2,7 @@
   <img
     src="https://flagcdn.com/24x18/pl.png"
     data-testid="language-pl-selector"
-    @click="$i18n.locale = 'pl'"
+    @click="setLanguage('pl')"
     alt="Polish flag"
     role="button"
   />
@@ -10,8 +10,17 @@
   <img
     src="https://flagcdn.com/24x18/gb.png"
     data-testid="language-en-selector"
-    @click="$i18n.locale = 'en'"
+    @click="setLanguage('en')"
     alt="English flag"
     role="button"
   />
 </template>
+<script setup>
+import {useI18n} from 'vue-i18n'
+
+const {locale} = useI18n()
+const setLanguage = (language) => {
+  localStorage.setItem('app-lang', language)
+  locale.value = language
+}
+</script>
