@@ -17,14 +17,8 @@ import {
 const fillInput = async (label, value) => {
   const input = screen.getByLabelText(label)
   const localUser = userEvent.setup()
-  await clearInput(label)
   await localUser.type(input, value)
   return input
-}
-
-const clearInput = async (label) => {
-  const input = screen.getByLabelText(label)
-  await userEvent.clear(input)
 }
 
 const expectInputToBeInTheDocument = (label) => {
