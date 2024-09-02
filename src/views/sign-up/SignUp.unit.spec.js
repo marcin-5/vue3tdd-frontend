@@ -20,6 +20,9 @@ vi.mock('vue-i18n')
 
 vi.mocked(useI18n).mockReturnValue({
   t: (key) => en[key],
+  locale: {
+    value: 'ab',
+  },
 })
 
 // Clear all mocks after each test
@@ -77,11 +80,15 @@ describe('Sign Up', () => {
       it('sends username, email, and password to the backend', async () => {
         axios.post.mockResolvedValue({data: {}})
         await setupAndClickButton()
-        expect(axios.post).toHaveBeenCalledWith(API_ENDPOINT, {
-          username: CREDENTIALS.username,
-          email: CREDENTIALS.email,
-          password: CREDENTIALS.password,
-        })
+        expect(axios.post).toHaveBeenCalledWith(
+          API_ENDPOINT,
+          {
+            username: CREDENTIALS.username,
+            email: CREDENTIALS.email,
+            password: CREDENTIALS.password,
+          },
+          {headers: {'Accept-Language': 'ab'}},
+        )
       })
     })
 
