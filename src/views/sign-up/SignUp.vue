@@ -56,7 +56,7 @@ import axios from 'axios'
 import {AppInput} from '@/components'
 import {useI18n} from 'vue-i18n'
 
-const {t} = useI18n()
+const {t, locale} = useI18n()
 
 // Form State
 const formState = reactive({
@@ -108,7 +108,11 @@ const submitForm = async () => {
   resetMessages()
   try {
     const {passwordRepeat, ...userData} = formState
-    const response = await axios.post('/api/v1/users', userData)
+    const response = await axios.post('/api/v1/users', userData, {
+      headers: {
+        'Accept-Language': locale.value,
+      },
+    })
     successMessage.value = response.data.message
   } catch (err) {
     manageApiError(err)
