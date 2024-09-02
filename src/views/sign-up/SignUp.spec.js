@@ -148,6 +148,24 @@ describe('SignUp Component User Interaction and API Integration Tests', () => {
         })
       })
 
+      describe.each([{language: 'en'}])('when langauge is $language', ({language}) => {
+        it('sends expected language in accept language header', async () => {
+          let acceptLanguage
+          server.use(
+            http.post(API_ENDPOINT, async ({request}) => {
+              acceptLanguage = request.headers.get('Accept-Language')
+              await delay('infinite')
+              return HttpResponse.json({})
+            }),
+          )
+          const {user, button} = await setupAndClickButton(0)
+          await clickButton(user, button)
+          await waitFor(() => {
+            expect(acceptLanguage).toBe(language)
+          })
+        })
+      })
+
       describe('when there is an ongoing API call', () => {
         it('does not allow clicking the button', async () => {
           await setupAndClickButton(2)
