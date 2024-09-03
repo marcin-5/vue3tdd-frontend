@@ -10,6 +10,8 @@ const setupAndRenderApp = async (path) => {
 const routeTestCases = [
   {path: '/', pageId: 'home-page'},
   {path: '/signup', pageId: 'signup-page'},
+  {path: '/activation/123', pageId: 'activation-page'},
+  {path: '/activation/456', pageId: 'activation-page'},
 ]
 
 const clickTestCases = [
