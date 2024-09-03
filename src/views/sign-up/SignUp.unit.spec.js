@@ -1,28 +1,24 @@
 import {render, screen, waitFor} from '@testing-library/vue'
 import SignUp from './SignUp.vue'
 import userEvent from '@testing-library/user-event'
-import axios from 'axios'
 import {afterEach, beforeEach, expect, vi} from 'vitest'
 import en from '@/locales/translations/en.json'
 import {useI18n} from 'vue-i18n'
 import {
-  API_ENDPOINT,
   CREDENTIALS,
   ERROR_MESSAGE,
   INPUT_LABELS,
   SIGN_UP_BUTTON_LABEL,
   SUCCESS_MESSAGE,
 } from './SignUpTestConstants'
+import {signUp} from '@/views/sign-up/api.js'
 
 // Mock axios and vue-i18n
-vi.mock('axios')
+vi.mock('./api')
 vi.mock('vue-i18n')
 
 vi.mocked(useI18n).mockReturnValue({
   t: (key) => en[key],
-  locale: {
-    value: 'ab',
-  },
 })
 
 // Clear all mocks after each test
@@ -78,31 +74,27 @@ describe('Sign Up', () => {
   describe('when user sets same value for password inputs', () => {
     describe('when user submits form', () => {
       it('sends username, email, and password to the backend', async () => {
-        axios.post.mockResolvedValue({data: {}})
+        signUp.mockResolvedValue({data: {}})
         await setupAndClickButton()
-        expect(axios.post).toHaveBeenCalledWith(
-          API_ENDPOINT,
-          {
-            username: CREDENTIALS.username,
-            email: CREDENTIALS.email,
-            password: CREDENTIALS.password,
-          },
-          {headers: {'Accept-Language': 'ab'}},
-        )
+        expect(signUp).toHaveBeenCalledWith({
+          username: CREDENTIALS.username,
+          email: CREDENTIALS.email,
+          password: CREDENTIALS.password,
+        })
       })
     })
 
     describe('when there is an ongoing API call', () => {
       it('does not allow clicking the button again', async () => {
-        axios.post.mockImplementation(
+        signUp.mockImplementation(
           () => new Promise((resolve) => setTimeout(() => resolve({data: {}}), 1000)),
         )
         await setupAndClickButton(2)
-        expect(axios.post).toHaveBeenCalledTimes(1)
+        expect(signUp).toHaveBeenCalledTimes(1)
       })
 
       it('displays spinner', async () => {
-        axios.post.mockImplementation(
+        signUp.mockImplementation(
           () => new Promise((resolve) => setTimeout(() => resolve({data: {}}), 1000)),
         )
         await setupAndClickButton()
@@ -112,7 +104,7 @@ describe('Sign Up', () => {
 
     describe('when success response is received', () => {
       beforeEach(() => {
-        axios.post.mockResolvedValue({data: {message: SUCCESS_MESSAGE}})
+        signUp.mockResolvedValue({data: {message: SUCCESS_MESSAGE}})
       })
 
       it('displays message received from backend', async () => {
@@ -133,7 +125,7 @@ describe('Sign Up', () => {
 
     describe('when network failure occurs', () => {
       beforeEach(() => {
-        axios.post.mockRejectedValue({})
+        signUp.mockRejectedValue({})
       })
 
       it('displays generic message', async () => {
@@ -152,7 +144,7 @@ describe('Sign Up', () => {
 
     describe('when user submits again', () => {
       it('hides error when api request is in progress', async () => {
-        axios.post.mockRejectedValueOnce({}).mockResolvedValue({data: {}})
+        signUp.mockRejectedValueOnce({}).mockResolvedValue({data: {}})
         const {user, button} = await setupAndClickButton()
         const errorMessage = await screen.findByText(ERROR_MESSAGE)
         await clickButton(user, button)
@@ -169,7 +161,7 @@ describe('Sign Up', () => {
     {field: 'password', message: 'Invalid password'},
   ])('when $field is invalid', ({field, message}) => {
     it(`displays ${message}`, async () => {
-      axios.post.mockRejectedValue({
+      signUp.mockRejectedValue({
         response: {
           status: 400,
           data: {
@@ -183,7 +175,7 @@ describe('Sign Up', () => {
     })
 
     it(`clears error after user updates ${field}`, async () => {
-      axios.post.mockRejectedValue({
+      signUp.mockRejectedValue({
         response: {
           status: 400,
           data: {
