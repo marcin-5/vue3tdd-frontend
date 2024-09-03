@@ -1,17 +1,44 @@
-import {render, router, screen} from 'test/helper'
+import {render, router, screen, waitFor} from 'test/helper'
 import App from './App.vue'
 
+const setupAndRenderApp = async (path) => {
+  await router.push(path)
+  await router.isReady()
+  return render(App)
+}
+
+const routeTestCases = [
+  {path: '/', pageId: 'home-page'},
+  {path: '/signup', pageId: 'signup-page'},
+]
+
+const clickTestCases = [
+  {initialPath: '/', clickingTo: 'link-signup-page', visiblePage: 'signup-page'},
+  {initialPath: '/signup', clickingTo: 'link-home-page', visiblePage: 'home-page'},
+]
+
 describe('Routing', () => {
-  describe.each([
-    {path: '/', pageId: 'home-page'},
-    {path: '/signup', pageId: 'signup-page'},
-  ])('when path is $path', ({path, pageId}) => {
+  describe.each(routeTestCases)('when path is $path', ({path, pageId}) => {
     it(`displays ${pageId}`, async () => {
-      await router.push(path)
-      await router.isReady()
-      render(App)
+      await setupAndRenderApp(path)
       const page = screen.queryByTestId(pageId)
       expect(page).toBeInTheDocument()
     })
   })
+
+  describe.each(clickTestCases)(
+    'when path is $initialPath',
+    ({initialPath, clickingTo, visiblePage}) => {
+      describe(`when user clicks ${clickingTo}`, () => {
+        it(`displays ${visiblePage}`, async () => {
+          const {user} = await setupAndRenderApp(initialPath)
+          const link = screen.queryByTestId(clickingTo)
+          await user.click(link)
+          await waitFor(() => {
+            expect(screen.queryByTestId(visiblePage)).toBeInTheDocument()
+          })
+        })
+      })
+    },
+  )
 })
