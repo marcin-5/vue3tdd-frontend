@@ -1,12 +1,11 @@
 <script setup>
-import LanguageSelector from '@/components/LanguageSelector.vue'
+import {LanguageSelector, NavBar} from '@/components'
 </script>
 
 <template>
-  <main class="container">
-    <router-link data-testid="link-home-page" to="/">Home</router-link>
-    <router-link data-testid="link-signup-page" to="/signup">{{ $t('signUp') }}</router-link>
-    <LanguageSelector />
+  <NavBar />
+  <main class="container mt-3">
     <router-view />
+    <LanguageSelector />
   </main>
 </template>
