@@ -1,5 +1,8 @@
 import {render, router, screen, waitFor} from 'test/helper'
 import App from './App.vue'
+import {vi} from 'vitest'
+
+vi.mock('@/views/activation/ActivationView.vue')
 
 const setupAndRenderApp = async (path) => {
   await router.push(path)
