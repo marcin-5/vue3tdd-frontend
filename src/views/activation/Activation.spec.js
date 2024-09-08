@@ -127,22 +127,12 @@ describe('Activation', () => {
     })
 
     it('displays spinner', async () => {
-      let resolveFunc
-      const promise = new Promise((resolve) => {
-        resolveFunc = resolve
-      })
-
-      server.use(
-        http.patch(ACTIVATION_URL, async () => {
-          await promise
-          return HttpResponse.json({message: MESSAGES.ACTIVATION_SUCCESS})
-        }),
-      )
+      const resolveMock = mockResponseMessage(MESSAGES.ACTIVATION_SUCCESS)
 
       await setupActivation()
       const spinner = await screen.findByRole('status')
       expect(spinner).toBeInTheDocument()
-      await resolveFunc()
+      await resolveMock
       await waitFor(() => {
         expect(spinner).not.toBeInTheDocument()
       })
