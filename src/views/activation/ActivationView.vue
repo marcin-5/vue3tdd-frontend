@@ -1,12 +1,10 @@
 <template>
   <div data-testid="activation-page">
-    <div v-if="status === 'fail'" class="alert alert-danger">
-      {{ errorMessage }}
-    </div>
-    <div v-if="status === 'success'" class="alert alert-success">
-      {{ successMessage }}
-    </div>
-    <span class="spinner-border spinner-border-sm" role="status" v-if="status === 'loading'"></span>
+    <Alert v-if="status === 'success'">{{ successMessage }}</Alert>
+    <Alert v-if="status === 'fail'" variant="danger"> {{ errorMessage }}</Alert>
+    <Alert variant="secondary" center v-if="status === 'loading'">
+      <Spinner size="normal" />
+    </Alert>
   </div>
 </template>
 
@@ -15,6 +13,7 @@ import axios from 'axios'
 import {ref, watchEffect} from 'vue'
 import {useI18n} from 'vue-i18n'
 import {useRoute} from 'vue-router'
+import {Alert, Spinner} from '@/components'
 
 const {t} = useI18n()
 const route = useRoute()

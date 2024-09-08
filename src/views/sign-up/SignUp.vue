@@ -37,22 +37,22 @@
           :error-message="passwordError"
           v-model="formState.passwordRepeat"
         />
-        <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+        <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
         <div class="text-center">
           <button class="btn btn-primary" :disabled="isFormDisabled || isLoading">
-            <span v-if="isLoading" role="status" class="spinner-border spinner-border-sm"></span>
+            <Spinner v-if="isLoading" />
             {{ $t('signUp') }}
           </button>
         </div>
       </div>
     </form>
-    <div v-else class="alert alert-success">{{ successMessage }}</div>
+    <Alert v-else>{{ successMessage }}</Alert>
   </div>
 </template>
 
 <script setup>
 import {computed, reactive, ref, watch} from 'vue'
-import {AppInput} from '@/components'
+import {Alert, AppInput, Spinner} from '@/components'
 import {useI18n} from 'vue-i18n'
 import {signUp} from '@/views/sign-up/api.js'
 
