@@ -56,15 +56,12 @@ describe('Activation', () => {
     await verifyRequestCounter(1)
   })
 
-  describe.each([{activationToken: '123'}, {activationToken: '456'}])(
-    'when token is $activationToken',
-    ({activationToken}) => {
-      it('sends token in request', async () => {
-        await setupActivation(`/activation/${activationToken}`)
-        await verifyActivationToken(activationToken)
-      })
-    },
-  )
+  describe.each(ACTIVATION_TOKENS)('when token is %s', (token) => {
+    it(`sends token ${token} in request`, async () => {
+      await setupActivation(`/activation/${token}`)
+      await verifyActivationToken(token)
+    })
+  })
 
   describe('when token is changed', () => {
     it('sends request with new token', async () => {
