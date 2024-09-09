@@ -5,5 +5,8 @@
   "password": "Hasło",
   "passwordRepeat": "Powtórz hasło",
   "passwordMismatch": "Hasła nie są takie same",
-  "genericError": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie."
+  "genericError": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+  "passwordReset": {
+    "request": "Zresetuj hasło"
+  }
 }
