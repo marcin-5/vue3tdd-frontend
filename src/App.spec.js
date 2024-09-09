@@ -15,6 +15,7 @@ const routeTestCases = [
   {path: '/signup', pageId: 'signup-page'},
   {path: '/activation/123', pageId: 'activation-page'},
   {path: '/activation/456', pageId: 'activation-page'},
+  {path: '/password-reset/request', pageId: 'password-reset-request-page'},
 ]
 
 const clickTestCases = [
