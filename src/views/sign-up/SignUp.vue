@@ -39,10 +39,9 @@
         />
         <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
         <div class="text-center">
-          <button class="btn btn-primary" :disabled="isFormDisabled || isLoading">
-            <Spinner v-if="isLoading" />
+          <AppButton :is-disabled="isButtonDisabled" :isLoading="isLoading">
             {{ $t('signUp') }}
-          </button>
+          </AppButton>
         </div>
       </div>
     </form>
@@ -52,7 +51,7 @@
 
 <script setup>
 import {computed, reactive, ref, watch} from 'vue'
-import {Alert, AppInput, Spinner} from '@/components'
+import {Alert, AppButton, AppInput} from '@/components'
 import {useI18n} from 'vue-i18n'
 import {signUp} from '@/views/sign-up/api.js'
 
@@ -67,7 +66,7 @@ const formState = reactive({
 })
 
 // Computed Properties
-const isFormDisabled = computed(() => checkPasswordMismatch(formState))
+const isButtonDisabled = computed(() => checkPasswordMismatch(formState))
 const passwordError = computed(() => getPasswordMismatchMessage(formState))
 
 // References

@@ -22,10 +22,9 @@
         <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
         <Alert v-if="successMessage">{{ successMessage }}</Alert>
         <div class="text-center">
-          <button class="btn btn-primary" :disabled="isDisabled || apiProgress">
-            <Spinner v-if="apiProgress" />
+          <AppButton :is-disabled="isButtonDisabled" :is-loading="apiProgress">
             {{ $t('passwordReset.set') }}
-          </button>
+          </AppButton>
         </div>
       </div>
     </form>
@@ -33,7 +32,7 @@
 </template>
 
 <script setup>
-import {Alert, AppInput, Spinner} from '@/components'
+import {Alert, AppButton, AppInput} from '@/components'
 import {computed, ref, watch} from 'vue'
 import {passwordSet} from './api'
 import {useI18n} from 'vue-i18n'
@@ -79,7 +78,7 @@ const handleApiError = (apiError) => {
 
 watch(() => password.value, clearErrors)
 
-const isDisabled = computed(() => !password.value || password.value !== passwordRepeat.value)
+const isButtonDisabled = computed(() => !password.value || password.value !== passwordRepeat.value)
 
 const passwordMatchError = computed(() =>
   password.value !== passwordRepeat.value ? t('passwordMismatch') : '',

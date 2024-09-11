@@ -15,10 +15,9 @@
         <Alert v-if="errorAlertMessage" variant="danger">{{ errorAlertMessage }}</Alert>
         <Alert v-if="successAlertMessage">{{ successAlertMessage }}</Alert>
         <div class="text-center">
-          <button class="btn btn-primary" :disabled="!emailValue || isLoading">
-            <Spinner v-if="isLoading" />
+          <AppButton :is-disabled="!emailValue" :is-loading="isLoading">
             {{ $t('passwordReset.request') }}
-          </button>
+          </AppButton>
         </div>
       </div>
     </form>
@@ -26,7 +25,7 @@
 </template>
 
 <script setup>
-import {Alert, AppInput, Spinner} from '@/components'
+import {Alert, AppButton, AppInput} from '@/components'
 import {ref, watch} from 'vue'
 import {passwordReset} from './api'
 import {useI18n} from 'vue-i18n'
