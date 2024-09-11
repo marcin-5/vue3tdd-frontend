@@ -1,6 +1,6 @@
 <template>
   <div class="col-lg-6 offset-lg-3 col-sm-8 offset-sm-2" data-testid="password-reset-set-page">
-    <form class="card" @submit.prevent="submit">
+    <form class="card" @submit.prevent="handleSubmit">
       <div class="card-header text-center">
         <h1>{{ $t('passwordReset.set') }}</h1>
       </div>
@@ -47,34 +47,41 @@ const apiProgress = ref(false)
 const successMessage = ref()
 const errorMessage = ref()
 const errors = ref({})
-const submit = async () => {
+
+const handleSubmit = async () => {
   apiProgress.value = true
-  errorMessage.value = undefined
+  clearErrors()
   try {
     const response = await passwordSet(route.query.tk, {password: password.value})
     successMessage.value = response.data.message
   } catch (apiError) {
-    if (apiError.response?.data?.validationErrors) {
-      errors.value = apiError.response.data.validationErrors
-    } else if (apiError.response?.data?.message) {
-      errorMessage.value = apiError.response.data.message
-    } else {
-      errorMessage.value = t('genericError')
-    }
+    handleApiError(apiError)
   } finally {
     apiProgress.value = false
   }
 }
-watch(
-  () => password.value,
-  () => {
-    delete errors.value.password
-  },
+
+const clearErrors = () => {
+  errorMessage.value = undefined
+  delete errors.value.password
+}
+
+const handleApiError = (apiError) => {
+  const apiErrorResponse = apiError.response?.data
+  if (apiErrorResponse?.validationErrors) {
+    errors.value = apiErrorResponse.validationErrors
+  } else if (apiErrorResponse?.message) {
+    errorMessage.value = apiErrorResponse.message
+  } else {
+    errorMessage.value = t('genericError')
+  }
+}
+
+watch(() => password.value, clearErrors)
+
+const isDisabled = computed(() => !password.value || password.value !== passwordRepeat.value)
+
+const passwordMatchError = computed(() =>
+  password.value !== passwordRepeat.value ? t('passwordMismatch') : '',
 )
-const isDisabled = computed(() => {
-  return password.value || passwordRepeat.value ? password.value !== passwordRepeat.value : true
-})
-const passwordMatchError = computed(() => {
-  return password.value !== passwordRepeat.value ? t('passwordMismatch') : ''
-})
 </script>
