@@ -12,16 +12,17 @@
         {{ user.username }}
       </li>
     </ul>
-    <div class="card-footer">
+    <div class="card-footer text-center">
       <button
-        :class="BUTTON_CLASSES"
+        class="btn btn-outline-secondary btn-sm float-start"
         @click="loadUsers(usersData.page - 1)"
         v-if="usersData.page !== 0"
       >
         {{ $t('userList.previous') }}
       </button>
+      <LoadingSpinner v-if="isLoading" size="normal"></LoadingSpinner>
       <button
-        :class="BUTTON_CLASSES"
+        class="btn btn-outline-secondary btn-sm float-end"
         @click="loadUsers(usersData.page + 1)"
         v-if="usersData.page + 1 < usersData.totalPages"
       >
@@ -32,10 +33,10 @@
 </template>
 
 <script setup>
-import {onMounted, reactive} from 'vue'
+import {onMounted, reactive, ref} from 'vue'
 import {fetchUsers} from './api'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
-const BUTTON_CLASSES = 'btn btn-outline-secondary btn-sm'
 const INITIAL_USERS_DATA = {
   content: [],
   page: 0,
@@ -43,6 +44,7 @@ const INITIAL_USERS_DATA = {
   totalPages: 0,
 }
 
+const isLoading = ref(false)
 const usersData = reactive({...INITIAL_USERS_DATA})
 
 const updateUsersData = ({content, page, size, totalPages}) => {
@@ -53,8 +55,10 @@ const updateUsersData = ({content, page, size, totalPages}) => {
 }
 
 const loadUsers = async (page = 0) => {
+  isLoading.value = true
   const response = await fetchUsers(page)
   updateUsersData(response.data)
+  isLoading.value = false
 }
 
 onMounted(() => loadUsers())
