@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="card-header text-center">
-      <h3>User List</h3>
+      <h3>{{ $t('userList.header') }}</h3>
     </div>
     <ul class="list-group list-group-flush">
       <li
@@ -12,12 +12,30 @@
         {{ user.username }}
       </li>
     </ul>
+    <div class="card-footer">
+      <button
+        :class="BUTTON_CLASSES"
+        @click="loadUsers(usersData.page - 1)"
+        v-if="usersData.page !== 0"
+      >
+        {{ $t('userList.previous') }}
+      </button>
+      <button
+        :class="BUTTON_CLASSES"
+        @click="loadUsers(usersData.page + 1)"
+        v-if="usersData.page + 1 < usersData.totalPages"
+      >
+        {{ $t('userList.next') }}
+      </button>
+    </div>
   </div>
 </template>
-<script setup>
-import {loadUsers as fetchUserData} from './api'
-import {onMounted, reactive} from 'vue'
 
+<script setup>
+import {onMounted, reactive} from 'vue'
+import {fetchUsers} from './api'
+
+const BUTTON_CLASSES = 'btn btn-outline-secondary btn-sm'
 const INITIAL_USERS_DATA = {
   content: [],
   page: 0,
@@ -34,10 +52,10 @@ const updateUsersData = ({content, page, size, totalPages}) => {
   usersData.totalPages = totalPages
 }
 
-const loadUsers = async () => {
-  const response = await fetchUserData()
+const loadUsers = async (page = 0) => {
+  const response = await fetchUsers(page)
   updateUsersData(response.data)
 }
 
-onMounted(loadUsers)
+onMounted(() => loadUsers())
 </script>
