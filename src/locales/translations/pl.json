@@ -9,5 +9,10 @@
   "passwordReset": {
     "request": "Zresetuj hasło",
     "set": "Zmień hasło"
+  },
+  "userList": {
+    "header": "Użytkownicy",
+    "next": "Dalej",
+    "previous": "Wstecz"
   }
 }
