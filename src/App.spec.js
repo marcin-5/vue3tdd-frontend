@@ -3,6 +3,7 @@ import App from './App.vue'
 import {vi} from 'vitest'
 
 vi.mock('@/views/activation/ActivationView.vue')
+vi.mock('@/views/home/components/UserList.vue')
 
 const setupAndRenderApp = async (path) => {
   await router.push(path)
