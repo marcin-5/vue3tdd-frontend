@@ -21,7 +21,7 @@ const getPage = (page, size) => {
     content: users.slice(start, end),
     page,
     size,
-    totalPages: Math.ceil(Math.ceil(page / size)),
+    totalPages: Math.ceil(users.length / size),
   }
 }
 
