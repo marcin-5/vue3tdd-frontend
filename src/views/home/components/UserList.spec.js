@@ -1,8 +1,9 @@
-import {render, screen, waitFor} from 'test/helper'
+import {render} from 'test/helper'
 import UserList from './UserList.vue'
 import {setupServer} from 'msw/node'
 import {http, HttpResponse} from 'msw'
-import {afterAll, beforeAll, beforeEach} from 'vitest'
+import {afterAll, beforeAll, beforeEach, expect} from 'vitest'
+import {screen, waitFor} from '@testing-library/vue'
 
 const users = [
   {id: 1, username: 'user1', email: 'user1@mail.com'},
@@ -49,6 +50,60 @@ describe('UserList', () => {
     render(UserList)
     await waitFor(() => {
       expect(screen.queryAllByText(/user\d/).length).toBe(3)
+    })
+  })
+
+  it('displays next page button', async () => {
+    render(UserList)
+    await screen.findByText('user1')
+    expect(screen.queryByRole('button', {name: 'Next'})).toBeInTheDocument()
+  })
+
+  it('does not display previous page button', async () => {
+    render(UserList)
+    await screen.findByText('user1')
+    expect(screen.queryByRole('button', {name: 'Previous'})).not.toBeInTheDocument()
+  })
+
+  describe('when user clicks next', () => {
+    it('displays next page', async () => {
+      const {user} = render(UserList)
+      await screen.findByText('user1')
+      await user.click(screen.queryByRole('button', {name: 'Next'}))
+      const firstUserOnPage2 = await screen.findByText('user4')
+      expect(firstUserOnPage2).toBeInTheDocument()
+    })
+
+    it('displays previous page button', async () => {
+      const {user} = render(UserList)
+      await screen.findByText('user1')
+      await user.click(screen.queryByRole('button', {name: 'Next'}))
+      await screen.findByText('user4')
+      expect(screen.queryByRole('button', {name: 'Previous'})).toBeInTheDocument()
+    })
+
+    describe('when user clicks previous', () => {
+      it('displays previous page', async () => {
+        const {user} = render(UserList)
+        await screen.findByText('user1')
+        await user.click(screen.queryByRole('button', {name: 'Next'}))
+        await screen.findByText('user4')
+        await user.click(screen.queryByRole('button', {name: 'Previous'}))
+        const firstUserOnPage1 = await screen.findByText('user1')
+        expect(firstUserOnPage1).toBeInTheDocument()
+      })
+    })
+
+    describe('when last page is loaded', () => {
+      it('does not display next page button', async () => {
+        const {user} = render(UserList)
+        await screen.findByText('user1')
+        await user.click(screen.queryByRole('button', {name: 'Next'}))
+        await screen.findByText('user4')
+        await user.click(screen.queryByRole('button', {name: 'Next'}))
+        await screen.findByText('user7')
+        expect(screen.queryByRole('button', {name: 'Next'})).not.toBeInTheDocument()
+      })
     })
   })
 })
