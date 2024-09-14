@@ -1,49 +1,46 @@
 <template>
   <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2" data-testid="signup-page">
-    <form
-      class="card"
-      @submit.prevent="submitForm"
-      data-testid="sign-up-form"
-      v-if="!successMessage"
-    >
-      <div class="card-header text-center">
-        <h1>{{ $t('signUp') }}</h1>
-      </div>
-      <div class="card-body">
-        <AppInput
-          id="username"
-          :label="$t('username')"
-          :error-message="validationErrors.username"
-          v-model="formState.username"
-        />
-        <AppInput
-          id="email"
-          type="email"
-          :label="$t('email')"
-          :error-message="validationErrors.email"
-          v-model="formState.email"
-        />
-        <AppInput
-          id="password"
-          type="password"
-          :label="$t('password')"
-          :error-message="validationErrors.password"
-          v-model="formState.password"
-        />
-        <AppInput
-          id="passwordRepeat"
-          type="password"
-          :label="$t('passwordRepeat')"
-          :error-message="passwordError"
-          v-model="formState.passwordRepeat"
-        />
-        <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
-        <div class="text-center">
-          <AppButton :is-disabled="isButtonDisabled" :isLoading="isLoading">
-            {{ $t('signUp') }}
-          </AppButton>
-        </div>
-      </div>
+    <form @submit.prevent="submitForm" data-testid="sign-up-form" v-if="!successMessage">
+      <Card>
+        <template v-slot:header>
+          <h1>{{ $t('signUp') }}</h1>
+        </template>
+        <template v-slot:body>
+          <AppInput
+            id="username"
+            :label="$t('username')"
+            :error-message="validationErrors.username"
+            v-model="formState.username"
+          />
+          <AppInput
+            id="email"
+            type="email"
+            :label="$t('email')"
+            :error-message="validationErrors.email"
+            v-model="formState.email"
+          />
+          <AppInput
+            id="password"
+            type="password"
+            :label="$t('password')"
+            :error-message="validationErrors.password"
+            v-model="formState.password"
+          />
+          <AppInput
+            id="passwordRepeat"
+            type="password"
+            :label="$t('passwordRepeat')"
+            :error-message="passwordError"
+            v-model="formState.passwordRepeat"
+          />
+          <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
+          <div class="text-center">
+            <AppButton :is-disabled="isButtonDisabled" :isLoading="isLoading">
+              {{ $t('signUp') }}
+            </AppButton>
+          </div>
+        </template>
+      </Card>
     </form>
     <Alert v-else>{{ successMessage }}</Alert>
   </div>
@@ -51,7 +48,7 @@
 
 <script setup>
 import {computed, reactive, ref, watch} from 'vue'
-import {Alert, AppButton, AppInput} from '@/components'
+import {Alert, AppButton, AppInput, Card} from '@/components'
 import {useI18n} from 'vue-i18n'
 import {signUp} from '@/views/sign-up/api.js'
 
