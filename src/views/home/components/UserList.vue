@@ -1,12 +1,14 @@
 <template>
-  <div class="card">
-    <div class="card-header text-center">
+  <Card>
+    <template v-slot:header>
       <h3>{{ $t('userList.header') }}</h3>
-    </div>
-    <ul class="list-group list-group-flush">
-      <UserItem v-for="user in usersData.content" :user="user" :key="user.id" />
-    </ul>
-    <div class="card-footer text-center">
+    </template>
+    <template v-slot:default>
+      <ul class="list-group list-group-flush">
+        <UserItem v-for="user in usersData.content" :user="user" :key="user.id" />
+      </ul>
+    </template>
+    <template v-slot:footer>
       <button
         class="btn btn-outline-secondary btn-sm float-start"
         @click="loadUsers(usersData.page - 1)"
@@ -14,7 +16,7 @@
       >
         {{ $t('userList.previous') }}
       </button>
-      <LoadingSpinner v-if="isLoading" size="normal"></LoadingSpinner>
+      <Spinner v-if="isLoading" size="normal"></Spinner>
       <button
         class="btn btn-outline-secondary btn-sm float-end"
         @click="loadUsers(usersData.page + 1)"
@@ -22,14 +24,14 @@
       >
         {{ $t('userList.next') }}
       </button>
-    </div>
-  </div>
+    </template>
+  </Card>
 </template>
 
 <script setup>
 import {onMounted, reactive, ref} from 'vue'
 import {fetchUsers} from './api'
-import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import {Card, Spinner} from '@/components'
 import UserItem from '@/views/home/components/UserItem.vue'
 
 const INITIAL_USERS_DATA = {
