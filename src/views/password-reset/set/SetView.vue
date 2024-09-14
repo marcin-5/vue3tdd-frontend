@@ -1,38 +1,40 @@
 <template>
   <div class="col-lg-6 offset-lg-3 col-sm-8 offset-sm-2" data-testid="password-reset-set-page">
-    <form class="card" @submit.prevent="handleSubmit">
-      <div class="card-header text-center">
-        <h1>{{ $t('passwordReset.set') }}</h1>
-      </div>
-      <div class="card-body">
-        <AppInput
-          id="password"
-          type="password"
-          :label="$t('password')"
-          :error-message="errors.password"
-          v-model="password"
-        />
-        <AppInput
-          id="passwordRepeat"
-          type="password"
-          :label="$t('passwordRepeat')"
-          :error-message="passwordMatchError"
-          v-model="passwordRepeat"
-        />
-        <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
-        <Alert v-if="successMessage">{{ successMessage }}</Alert>
-        <div class="text-center">
-          <AppButton :is-disabled="isButtonDisabled" :is-loading="apiProgress">
-            {{ $t('passwordReset.set') }}
-          </AppButton>
-        </div>
-      </div>
+    <form @submit.prevent="handleSubmit">
+      <Card>
+        <template v-slot:header>
+          <h1>{{ $t('passwordReset.set') }}</h1>
+        </template>
+        <template v-slot:body>
+          <AppInput
+            id="password"
+            type="password"
+            :label="$t('password')"
+            :error-message="errors.password"
+            v-model="password"
+          />
+          <AppInput
+            id="passwordRepeat"
+            type="password"
+            :label="$t('passwordRepeat')"
+            :error-message="passwordMatchError"
+            v-model="passwordRepeat"
+          />
+          <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
+          <Alert v-if="successMessage">{{ successMessage }}</Alert>
+          <div class="text-center">
+            <AppButton :is-disabled="isButtonDisabled" :is-loading="apiProgress">
+              {{ $t('passwordReset.set') }}
+            </AppButton>
+          </div>
+        </template>
+      </Card>
     </form>
   </div>
 </template>
 
 <script setup>
-import {Alert, AppButton, AppInput} from '@/components'
+import {Alert, AppButton, AppInput, Card} from '@/components'
 import {computed, ref, watch} from 'vue'
 import {passwordSet} from './api'
 import {useI18n} from 'vue-i18n'
