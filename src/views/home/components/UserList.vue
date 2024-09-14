@@ -4,13 +4,7 @@
       <h3>{{ $t('userList.header') }}</h3>
     </div>
     <ul class="list-group list-group-flush">
-      <li
-        class="list-group-item list-group-item-action"
-        v-for="user in usersData.content"
-        :key="user.id"
-      >
-        {{ user.username }}
-      </li>
+      <UserItem v-for="user in usersData.content" :user="user" :key="user.id" />
     </ul>
     <div class="card-footer text-center">
       <button
@@ -36,6 +30,7 @@
 import {onMounted, reactive, ref} from 'vue'
 import {fetchUsers} from './api'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import UserItem from '@/views/home/components/UserItem.vue'
 
 const INITIAL_USERS_DATA = {
   content: [],
