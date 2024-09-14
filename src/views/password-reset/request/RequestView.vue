@@ -1,31 +1,33 @@
 <template>
   <div class="col-lg-6 offset-lg-3 col-sm-8 offset-sm-2" data-testid="password-reset-request-page">
-    <form class="card" @submit.prevent="submitForm">
-      <div class="card-header text-center">
-        <h1>{{ $t('passwordReset.request') }}</h1>
-      </div>
-      <div class="card-body">
-        <AppInput
-          id="email"
-          type="email"
-          :label="$t('email')"
-          :errorMessage="validationErrors.email"
-          v-model="emailValue"
-        />
-        <Alert v-if="errorAlertMessage" variant="danger">{{ errorAlertMessage }}</Alert>
-        <Alert v-if="successAlertMessage">{{ successAlertMessage }}</Alert>
-        <div class="text-center">
-          <AppButton :is-disabled="!emailValue" :is-loading="isLoading">
-            {{ $t('passwordReset.request') }}
-          </AppButton>
-        </div>
-      </div>
+    <form @submit.prevent="submitForm">
+      <Card>
+        <template v-slot:header>
+          <h1>{{ $t('passwordReset.request') }}</h1>
+        </template>
+        <template v-slot:body>
+          <AppInput
+            id="email"
+            type="email"
+            :label="$t('email')"
+            :errorMessage="validationErrors.email"
+            v-model="emailValue"
+          />
+          <Alert v-if="errorAlertMessage" variant="danger">{{ errorAlertMessage }}</Alert>
+          <Alert v-if="successAlertMessage">{{ successAlertMessage }}</Alert>
+          <div class="text-center">
+            <AppButton :is-disabled="!emailValue" :is-loading="isLoading">
+              {{ $t('passwordReset.request') }}
+            </AppButton>
+          </div>
+        </template>
+      </Card>
     </form>
   </div>
 </template>
 
 <script setup>
-import {Alert, AppButton, AppInput} from '@/components'
+import {Alert, AppButton, AppInput, Card} from '@/components'
 import {ref, watch} from 'vue'
 import {passwordReset} from './api'
 import {useI18n} from 'vue-i18n'
