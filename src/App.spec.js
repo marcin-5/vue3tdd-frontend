@@ -18,6 +18,8 @@ const routeTestCases = [
   {path: '/activation/456', pageId: 'activation-page'},
   {path: '/password-reset/request', pageId: 'password-reset-request-page'},
   {path: '/password-reset/set', pageId: 'password-reset-set-page'},
+  {path: '/user/1', pageId: 'user-page'},
+  {path: '/user/2', pageId: 'user-page'},
 ]
 
 const clickTestCases = [
@@ -49,4 +51,17 @@ describe('Routing', () => {
       })
     },
   )
+
+  describe('when user is at home page', () => {
+    describe('when user clicks to user name in user list', () => {
+      it('displays user page', async () => {
+        const {user} = await setupAndRenderApp('/')
+        const link = await screen.findByText('test user')
+        await user.click(link)
+        await waitFor(() => {
+          expect(screen.queryByTestId('user-page')).toBeInTheDocument()
+        })
+      })
+    })
+  })
 })
