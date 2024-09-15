@@ -4,6 +4,7 @@ import SignUp from '@/views/sign-up/SignUp.vue'
 import Activation from '@/views/activation/ActivationView.vue'
 import PasswordResetRequest from '@/views/password-reset/request/RequestView.vue'
 import PasswordResetSet from '@/views/password-reset/set/SetView.vue'
+import User from '@/views/user/UserPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,10 @@ const router = createRouter({
     {
       path: '/password-reset/set',
       component: PasswordResetSet,
+    },
+    {
+      path: '/user/:id',
+      component: User,
     },
   ],
 })
