@@ -21,7 +21,6 @@
             v-model="passwordRepeat"
           />
           <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
-          <Alert v-if="successMessage">{{ successMessage }}</Alert>
           <div class="text-center">
             <AppButton :is-disabled="isButtonDisabled" :is-loading="apiProgress">
               {{ $t('passwordReset.set') }}
@@ -38,14 +37,14 @@ import {Alert, AppButton, AppInput, Card} from '@/components'
 import {computed, ref, watch} from 'vue'
 import {passwordSet} from './api'
 import {useI18n} from 'vue-i18n'
-import {useRoute} from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 
 const {t} = useI18n()
 const route = useRoute()
+const router = useRouter()
 const password = ref('')
 const passwordRepeat = ref('')
 const apiProgress = ref(false)
-const successMessage = ref()
 const errorMessage = ref()
 const errors = ref({})
 
@@ -53,8 +52,8 @@ const handleSubmit = async () => {
   apiProgress.value = true
   clearErrors()
   try {
-    const response = await passwordSet(route.query.tk, {password: password.value})
-    successMessage.value = response.data.message
+    await passwordSet(route.query.tk, {password: password.value})
+    await router.push('/login')
   } catch (apiError) {
     handleApiError(apiError)
   } finally {
