@@ -8,7 +8,8 @@
   "genericError": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
   "passwordReset": {
     "request": "Zresetuj hasło",
-    "set": "Zmień hasło"
+    "set": "Zmień hasło",
+    "forgot": "Nie pamiętasz hasła?"
   },
   "userList": {
     "header": "Użytkownicy",
