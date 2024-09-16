@@ -14,5 +14,7 @@
     "header": "Użytkownicy",
     "next": "Dalej",
     "previous": "Wstecz"
-  }
+  },
+  "login": "Logowanie",
+  "loginLink": "Zaloguj się"
 }
