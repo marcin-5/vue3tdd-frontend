@@ -11,6 +11,11 @@
       </router-link>
       <ul class="navbar-nav">
         <li class="nav-item">
+          <router-link class="nav-link" to="/login" data-testid="link-login-page"
+            >{{ $t('loginLink') }}
+          </router-link>
+        </li>
+        <li class="nav-item">
           <router-link class="nav-link" data-testid="link-signup-page" to="/signup"
             >{{ $t('signUp') }}
           </router-link>
