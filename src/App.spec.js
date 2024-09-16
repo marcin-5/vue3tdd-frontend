@@ -21,11 +21,13 @@ const routeTestCases = [
   {path: '/password-reset/set', pageId: 'password-reset-set-page'},
   {path: '/user/1', pageId: 'user-page'},
   {path: '/user/2', pageId: 'user-page'},
+  {path: '/login', pageId: 'login-page'},
 ]
 
 const clickTestCases = [
   {initialPath: '/', clickingTo: 'link-signup-page', visiblePage: 'signup-page'},
   {initialPath: '/signup', clickingTo: 'link-home-page', visiblePage: 'home-page'},
+  {initialPath: '/', clickingTo: 'link-login-page', visiblePage: 'login-page'},
 ]
 
 describe('Routing', () => {
