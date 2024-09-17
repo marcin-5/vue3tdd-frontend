@@ -5,5 +5,6 @@ import {i18n} from '@/locales/index.js'
 expect.extend({...matchers})
 
 afterEach(() => {
+  localStorage.clear()
   i18n.global.locale.value = 'en'
 })
