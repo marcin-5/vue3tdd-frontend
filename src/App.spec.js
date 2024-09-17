@@ -133,6 +133,5 @@ describe('Routing', () => {
         expect(state.username).toBe('user1')
       })
     })
-    })
   })
 })
