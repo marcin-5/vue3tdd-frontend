@@ -125,6 +125,14 @@ describe('Routing', () => {
         await screen.findByTestId('user-page')
         expect(router.currentRoute.value.path).toBe('/user/1')
       })
+
+      it('stores logged in state in local storage', async () => {
+        await setupLoggedIn()
+        const state = JSON.parse(localStorage.getItem('auth'))
+        expect(state.id).toBe(1)
+        expect(state.username).toBe('user1')
+      })
+    })
     })
   })
 })
