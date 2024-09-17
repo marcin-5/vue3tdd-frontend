@@ -1,10 +1,18 @@
 import {render, router, screen, waitFor} from 'test/helper'
 import App from './App.vue'
-import {vi} from 'vitest'
+import {afterAll, beforeAll, beforeEach, vi} from 'vitest'
+import {setupServer} from 'msw/node'
+import {http, HttpResponse} from 'msw'
 
 vi.mock('@/views/activation/ActivationView.vue')
 vi.mock('@/views/home/components/UserList.vue')
 vi.mock('@/views/user/User.vue')
+
+const server = setupServer(
+  http.post('/api/v1/auth', () => {
+    return HttpResponse.json({id: 1, username: 'user1', email: 'user1@mail.com', image: null})
+  }),
+)
 
 const setupAndRenderApp = async (path) => {
   await router.push(path)
@@ -29,6 +37,10 @@ const clickTestCases = [
   {initialPath: '/signup', clickingTo: 'link-home-page', visiblePage: 'home-page'},
   {initialPath: '/', clickingTo: 'link-login-page', visiblePage: 'login-page'},
 ]
+
+beforeEach(() => server.resetHandlers())
+beforeAll(() => server.listen())
+afterAll(() => server.close())
 
 describe('Routing', () => {
   describe.each(routeTestCases)('when path is $path', ({path, pageId}) => {
@@ -77,6 +89,18 @@ describe('Routing', () => {
         await waitFor(() => {
           expect(screen.queryByTestId('password-reset-request-page')).toBeInTheDocument()
         })
+      })
+    })
+  })
+
+  describe('when loging successful', () => {
+    it('navigates to home page', async () => {
+      const {user} = await setupAndRenderApp('/login')
+      await user.type(screen.getByLabelText('Email'), 'user1@mail.com')
+      await user.type(screen.getByLabelText('Password'), 'P4ssword')
+      await user.click(screen.getByRole('button', {name: 'Login'}))
+      await waitFor(() => {
+        expect(screen.queryByTestId('home-page')).toBeInTheDocument()
       })
     })
   })
