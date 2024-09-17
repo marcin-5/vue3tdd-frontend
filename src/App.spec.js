@@ -133,5 +133,18 @@ describe('Routing', () => {
         expect(state.username).toBe('user1')
       })
     })
+
+    describe('when local storage has auth data', () => {
+      it('displays logged in layout', async () => {
+        localStorage.setItem(
+          'auth',
+          JSON.stringify({id: 1, username: 'user1', email: 'user1@mail.com'}),
+        )
+        await setupAndRenderApp('/')
+        expect(screen.queryByTestId('link-signup-page')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('link-login-page')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('link-my-profile')).toBeInTheDocument()
+      })
+    })
   })
 })
