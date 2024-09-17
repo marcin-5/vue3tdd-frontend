@@ -22,19 +22,19 @@ function getInitialAuthState() {
 const initialState = {...INITIAL_AUTH_STATE, ...getInitialAuthState()}
 
 export const useAuthStore = defineStore('auth', () => {
-  const auth = reactive({...initialState})
+  const authState = reactive({...initialState})
 
   function updateAuthState(data) {
-    Object.assign(auth, data)
+    Object.assign(authState, data)
   }
 
   watch(
-    auth,
+    authState,
     () => {
-      localStorage.setItem('auth', JSON.stringify(auth))
+      localStorage.setItem('auth', JSON.stringify(authState))
     },
     {deep: true},
   )
 
-  return {auth, updateAuthState}
+  return {authState, updateAuthState}
 })

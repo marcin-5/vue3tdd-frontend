@@ -10,7 +10,7 @@
         Home
       </router-link>
       <ul class="navbar-nav">
-        <template v-if="!auth.id">
+        <template v-if="!authState.id">
           <li class="nav-item">
             <router-link class="nav-link" to="/login" data-testid="link-login-page"
               >{{ $t('loginLink') }}
@@ -22,8 +22,8 @@
             </router-link>
           </li>
         </template>
-        <li class="nav-item" v-if="auth.id">
-          <router-link class="nav-link" data-testid="link-my-profile" :to="'/user/' + auth.id">
+        <li class="nav-item" v-if="authState.id">
+          <router-link class="nav-link" data-testid="link-my-profile" :to="'/user/' + authState.id">
             My profile
           </router-link>
         </li>
@@ -35,5 +35,5 @@
 <script setup>
 import {useAuthStore} from '@/stores/auth'
 
-const {auth} = useAuthStore()
+const {authState} = useAuthStore()
 </script>
