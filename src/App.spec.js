@@ -93,7 +93,7 @@ describe('Routing', () => {
     })
   })
 
-  describe('when loging successful', () => {
+  describe('when logging successful', () => {
     it('navigates to home page', async () => {
       const {user} = await setupAndRenderApp('/login')
       await user.type(screen.getByLabelText('Email'), 'user1@mail.com')
