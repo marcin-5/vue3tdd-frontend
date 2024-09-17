@@ -4,6 +4,7 @@ import en from '@/locales/translations/en.json'
 import pl from '@/locales/translations/pl.json'
 import userEvent from '@testing-library/user-event'
 import router from '@/router'
+import {createPinia} from 'pinia'
 
 const i18n = createI18n({
   legacy: false,
@@ -14,7 +15,7 @@ const i18n = createI18n({
 
 const globalOptions = {
   global: {
-    plugins: [i18n, router],
+    plugins: [i18n, router, createPinia()],
   },
 }
 
