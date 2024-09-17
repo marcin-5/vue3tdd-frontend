@@ -1,17 +1,8 @@
 import {render} from '@testing-library/vue'
-import {createI18n} from 'vue-i18n'
-import en from '@/locales/translations/en.json'
-import pl from '@/locales/translations/pl.json'
 import userEvent from '@testing-library/user-event'
 import router from '@/router'
 import {createPinia} from 'pinia'
-
-const i18n = createI18n({
-  legacy: false,
-  globalInjection: true,
-  locale: 'en',
-  messages: {en, pl},
-})
+import {i18n} from '@/locales'
 
 const globalOptions = {
   global: {
