@@ -39,10 +39,12 @@
 import {computed, reactive, ref, watch} from 'vue'
 import {Alert, AppButton, AppInput, Card} from '@/components'
 import {useI18n} from 'vue-i18n'
+import {useRouter} from 'vue-router'
 import {login} from './api'
 
 const INITIAL_FORM_STATE = {email: '', password: ''}
 
+const router = useRouter()
 const {t} = useI18n()
 const formState = reactive({...INITIAL_FORM_STATE})
 const isButtonDisabled = computed(() => !(formState.password && formState.email))
@@ -55,6 +57,7 @@ const submitForm = async () => {
   errorMessage.value = ''
   try {
     await login(formState)
+    await router.push('/')
   } catch (apiError) {
     handleApiError(apiError)
   } finally {
