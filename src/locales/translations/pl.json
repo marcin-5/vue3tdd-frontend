@@ -16,6 +16,7 @@
     "next": "Dalej",
     "previous": "Wstecz"
   },
+  "logout": "Wyloguj się",
   "login": "Logowanie",
   "loginLink": "Zaloguj się"
 }
