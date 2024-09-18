@@ -16,6 +16,10 @@
     "next": "Dalej",
     "previous": "Wstecz"
   },
+  "deleteUser": {
+    "button": "Usuń",
+    "confirm": "Na pewno usunąć?"
+  },
   "logout": "Wyloguj się",
   "login": "Logowanie",
   "loginLink": "Zaloguj się"
