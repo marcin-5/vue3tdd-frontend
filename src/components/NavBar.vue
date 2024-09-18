@@ -22,11 +22,22 @@
             </router-link>
           </li>
         </template>
-        <li class="nav-item" v-if="authState.id">
-          <router-link class="nav-link" data-testid="link-my-profile" :to="'/user/' + authState.id">
-            My profile
-          </router-link>
-        </li>
+        <template v-if="authState.id">
+          <li class="nav-item">
+            <router-link
+              class="nav-link"
+              :to="'/user/' + authState.id"
+              data-testid="link-my-profile"
+            >
+              My Profile
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <span class="nav-link" data-testid="link-logout" role="button" @click="logout">
+              {{ $t('logout') }}
+            </span>
+          </li>
+        </template>
       </ul>
     </div>
   </nav>
@@ -34,6 +45,16 @@
 
 <script setup>
 import {useAuthStore} from '@/stores/auth'
+import http from '@/lib/http'
 
-const {authState} = useAuthStore()
+const {authState, logout: logoutStore} = useAuthStore()
+
+const logout = async () => {
+  logoutStore()
+  try {
+    await http.post('/api/v1/logout')
+  } catch (error) {
+    console.error('Failed to logout:', error)
+  }
+}
 </script>

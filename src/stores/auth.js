@@ -32,6 +32,10 @@ export const useAuthStore = defineStore('auth', () => {
     saveAuthState(authState)
   }
 
+  function logout() {
+    updateAuthState(INITIAL_AUTH_STATE)
+  }
+
   watch(
     authState,
     () => {
@@ -40,5 +44,5 @@ export const useAuthStore = defineStore('auth', () => {
     {deep: true},
   )
 
-  return {authState, updateAuthState}
+  return {authState, updateAuthState, logout}
 })
