@@ -20,6 +20,9 @@
     "button": "Usuń",
     "confirm": "Na pewno usunąć?"
   },
+  "edit": "Edycja",
+  "save": "Zapisz",
+  "cancel": "Anuluj",
   "logout": "Wyloguj się",
   "login": "Logowanie",
   "loginLink": "Zaloguj się"

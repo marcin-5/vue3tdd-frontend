@@ -20,6 +20,9 @@
     "button": "Delete",
     "confirm": "Are you sure?"
   },
+  "edit": "Edit",
+  "save": "Save",
+  "cancel": "Cancel",
   "logout": "Logout",
   "login": "Login",
   "loginLink": "Login"
