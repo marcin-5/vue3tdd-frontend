@@ -5,6 +5,7 @@
       :class="[classes.input, {' is-invalid': errorMessage}]"
       :id="id"
       :type="type"
+      :value="modelValue"
       @input="onInput"
     />
     <span v-if="errorMessage" :class="[classes.span, {' invalid-feedback': errorMessage}]">
