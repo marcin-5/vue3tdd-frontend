@@ -1,7 +1,7 @@
 import {render, router, screen, waitFor} from 'test/helper'
 import User from './UserPage.vue'
 import {setupServer} from 'msw/node'
-import {http, HttpResponse} from 'msw'
+import {delay, http, HttpResponse} from 'msw'
 import {afterAll, beforeAll, beforeEach} from 'vitest'
 import {i18n} from '@/locales'
 
@@ -38,7 +38,7 @@ describe('User Page', () => {
   describe('when there is logged in user', () => {
     const setupPageLoaded = async (id = '3') => {
       const result = await setup(`/user/${id}`)
-      await screen.findByText(`user${id}`)
+      await screen.findByTestId('h3-username')
       const deleteButton = screen.queryByRole('button', {name: 'Delete'})
       const editButton = screen.queryByRole('button', {name: 'Edit'})
       return {...result, elements: {deleteButton, editButton}}
@@ -128,6 +128,103 @@ describe('User Page', () => {
             await user.click(screen.queryByRole('button', {name: 'Cancel'}))
             await waitFor(() => {
               expect(screen.queryByText('user3')).toBeInTheDocument()
+            })
+          })
+        })
+
+        describe('when user clicks save', () => {
+          describe('when api request in progress', () => {
+            it('displays spinner', async () => {
+              server.use(
+                http.put('/api/v1/users/:id', async () => {
+                  await delay('infinite')
+                  return HttpResponse.json({})
+                }),
+              )
+              const {
+                user,
+                elements: {editButton},
+              } = await setupPageLoaded()
+              await user.click(editButton)
+              await user.click(screen.getByRole('button', {name: 'Save'}))
+              await waitFor(() => {
+                expect(screen.queryByRole('status')).toBeInTheDocument()
+              })
+            })
+          })
+
+          it('sends update request for logged in user', async () => {
+            let id
+            server.use(
+              http.put('/api/v1/users/:id', async ({params}) => {
+                id = params.id
+                return HttpResponse.json({})
+              }),
+            )
+            const {
+              user,
+              elements: {editButton},
+            } = await setupPageLoaded()
+            await user.click(editButton)
+            await user.click(screen.getByRole('button', {name: 'Save'}))
+            await waitFor(() => {
+              expect(id).toBe('3')
+            })
+          })
+
+          it('sends request with updated username', async () => {
+            let requestBody
+            server.use(
+              http.put('/api/v1/users/:id', async ({request}) => {
+                requestBody = await request.json()
+                return HttpResponse.json({})
+              }),
+            )
+            const {
+              user,
+              elements: {editButton},
+            } = await setupPageLoaded()
+            await user.click(editButton)
+            await user.type(screen.getByLabelText('Username'), '-updated')
+            await user.click(screen.getByRole('button', {name: 'Save'}))
+            await waitFor(() => {
+              expect(requestBody).toStrictEqual({username: 'user3-updated'})
+            })
+          })
+
+          describe('when result is success', () => {
+            it('displays non edit mode', async () => {
+              server.use(
+                http.put('/api/v1/users/:id', async () => {
+                  return HttpResponse.json({})
+                }),
+              )
+              const {
+                user,
+                elements: {editButton},
+              } = await setupPageLoaded()
+              await user.click(editButton)
+              await user.click(screen.getByRole('button', {name: 'Save'}))
+              await waitFor(() => {
+                expect(screen.getByRole('button', {name: 'Edit'})).toBeInTheDocument()
+              })
+            })
+
+            it('displays updated name', async () => {
+              server.use(
+                http.put('/api/v1/users/:id', async () => {
+                  return HttpResponse.json({username: 'user3-updated'})
+                }),
+              )
+              const {
+                user,
+                elements: {editButton},
+              } = await setupPageLoaded()
+              await user.click(editButton)
+              await user.click(screen.getByRole('button', {name: 'Save'}))
+              await waitFor(() => {
+                expect(screen.getByText('user3-updated')).toBeInTheDocument()
+              })
             })
           })
         })
