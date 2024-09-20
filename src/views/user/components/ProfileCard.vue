@@ -12,7 +12,7 @@
     <template v-slot:body>
       <div class="text-center">
         <template v-if="!editMode">
-          <h3>{{ username }}</h3>
+          <h3 data-testid="h3-username">{{ username }}</h3>
           <AppButton v-if="authState.id === user.id" @click="editMode = !editMode"
             >{{ $t('edit') }}
           </AppButton>
