@@ -119,12 +119,13 @@ describe('User Page', () => {
         })
 
         describe('when user clicks cancel', () => {
-          it('displays username', async () => {
+          it('displays initial username', async () => {
             const {
               user,
               elements: {editButton},
             } = await setupPageLoaded()
             await user.click(editButton)
+            await user.type(screen.getByLabelText('Username'), '-updated')
             await user.click(screen.queryByRole('button', {name: 'Cancel'}))
             await waitFor(() => {
               expect(screen.queryByText('user3')).toBeInTheDocument()
