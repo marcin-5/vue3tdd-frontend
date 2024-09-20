@@ -38,7 +38,8 @@ const setupTestPage = async (path) => {
 
 const setupPageLoaded = async (id = '3') => {
   const result = await setupTestPage(`/user/${id}`)
-  await screen.findByText(`user${id}`)
+  // await screen.findByText(`user${id}`)
+  await screen.findByTestId('h3-username')
   const deleteButton = screen.queryByRole('button', {name: 'Delete'})
   return {...result, elements: {deleteButton}}
 }
