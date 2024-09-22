@@ -22,7 +22,7 @@
           />
           <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
           <div class="text-center">
-            <AppButton :is-disabled="isButtonDisabled" :is-loading="apiProgress">
+            <AppButton :is-disabled="isButtonDisabled" :in-progress="apiProgress">
               {{ $t('passwordReset.set') }}
             </AppButton>
           </div>

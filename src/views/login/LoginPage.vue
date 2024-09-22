@@ -22,7 +22,7 @@
           />
           <Alert v-if="errorMessage" variant="danger">{{ errorMessage }}</Alert>
           <div class="text-center">
-            <AppButton :is-disabled="isButtonDisabled" :isLoading="isLoading">
+            <AppButton :is-disabled="isButtonDisabled" :in-progress="isLoading">
               {{ $t('loginLink') }}
             </AppButton>
           </div>

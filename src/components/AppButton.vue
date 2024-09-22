@@ -1,6 +1,6 @@
 <template>
-  <button :class="`btn btn-${variant}`" :disabled="isDisabled || isLoading">
-    <Spinner v-if="isLoading" />
+  <button :class="`btn btn-${variant}`" :disabled="isDisabled || inProgress">
+    <Spinner v-if="inProgress" />
     <slot />
   </button>
 </template>
@@ -10,7 +10,7 @@ import Spinner from './LoadingSpinner.vue'
 
 defineProps({
   isDisabled: Boolean,
-  isLoading: Boolean,
+  inProgress: Boolean,
   variant: {
     type: String,
     default: 'primary',

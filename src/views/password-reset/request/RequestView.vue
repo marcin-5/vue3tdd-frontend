@@ -16,7 +16,7 @@
           <Alert v-if="errorAlertMessage" variant="danger">{{ errorAlertMessage }}</Alert>
           <Alert v-if="successAlertMessage">{{ successAlertMessage }}</Alert>
           <div class="text-center">
-            <AppButton :is-disabled="!emailValue" :is-loading="isLoading">
+            <AppButton :is-disabled="!emailValue" :in-progress="isLoading">
               {{ $t('passwordReset.request') }}
             </AppButton>
           </div>

@@ -3,7 +3,7 @@
     v-if="authState.id === id"
     variant="danger"
     @click="onClickDelete"
-    :is-loading="isLoading"
+    :in-progress="inProgress"
     >{{ t('deleteUser.button') }}
   </AppButton>
   <Alert variant="danger" v-if="error">{{ error }}</Alert>
@@ -23,7 +23,7 @@ defineProps({
 const {t} = useI18n()
 const router = useRouter()
 const {authState, logout} = useAuthStore()
-const isLoading = ref(false)
+const inProgress = ref(false)
 const error = ref()
 
 const onClickDelete = async () => {
@@ -31,13 +31,13 @@ const onClickDelete = async () => {
   const response = confirm(t('deleteUser.confirm'))
   if (response) {
     try {
-      isLoading.value = true
+      inProgress.value = true
       await deleteUser(authState.id)
       logout()
       await router.push('/')
     } catch {
       error.value = t('genericError')
-      isLoading.value = false
+      inProgress.value = false
     }
   }
 }
