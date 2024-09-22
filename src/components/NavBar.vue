@@ -29,7 +29,13 @@
               :to="'/user/' + authState.id"
               data-testid="link-my-profile"
             >
-              My Profile
+              <img
+                src="@/assets/profile.png"
+                :alt="authState.username + ' profile'"
+                width="30"
+                class="rounded-circle shadow-sm"
+              />
+              {{ authState.username }}
             </router-link>
           </li>
           <li class="nav-item">
