@@ -44,6 +44,12 @@ describe('User Page', () => {
       return {...result, elements: {deleteButton, editButton}}
     }
 
+    async function userClickButton(buttonName = 'editButton') {
+      const {user, elements} = await setupPageLoaded()
+      await user.click(elements[buttonName])
+      return {user, elements}
+    }
+
     beforeEach(() => {
       localStorage.setItem('auth', JSON.stringify({id: 3, username: 'user3'}))
     })
@@ -57,74 +63,46 @@ describe('User Page', () => {
 
       describe('when user clicks edit button', () => {
         it('displays username input', async () => {
-          const {
-            user,
-            elements: {editButton},
-          } = await setupPageLoaded()
-          await user.click(editButton)
+          await userClickButton()
           expect(screen.getByLabelText('Username')).toBeInTheDocument()
         })
         it('hides edit button', async () => {
           const {
-            user,
             elements: {editButton},
-          } = await setupPageLoaded()
-          await user.click(editButton)
+          } = await userClickButton()
           expect(editButton).not.toBeInTheDocument()
         })
 
         it('hides delete button', async () => {
           const {
-            user,
-            elements: {editButton, deleteButton},
-          } = await setupPageLoaded()
-          await user.click(editButton)
+            elements: {deleteButton},
+          } = await userClickButton()
           expect(deleteButton).not.toBeInTheDocument()
         })
 
         it('hides username', async () => {
-          const {
-            user,
-            elements: {editButton},
-          } = await setupPageLoaded()
-          await user.click(editButton)
+          await userClickButton()
           expect(screen.queryByText('user3')).not.toBeInTheDocument()
         })
 
         it('sets username as initial value for input', async () => {
-          const {
-            user,
-            elements: {editButton},
-          } = await setupPageLoaded()
-          await user.click(editButton)
+          await userClickButton()
           expect(screen.getByLabelText('Username')).toHaveValue('user3')
         })
 
         it('displays save button', async () => {
-          const {
-            user,
-            elements: {editButton},
-          } = await setupPageLoaded()
-          await user.click(editButton)
+          await userClickButton()
           expect(screen.queryByRole('button', {name: 'Save'})).toBeInTheDocument()
         })
 
         it('displays cancel button', async () => {
-          const {
-            user,
-            elements: {editButton},
-          } = await setupPageLoaded()
-          await user.click(editButton)
+          await userClickButton()
           expect(screen.queryByRole('button', {name: 'Cancel'})).toBeInTheDocument()
         })
 
         describe('when user clicks cancel', () => {
           it('displays initial username', async () => {
-            const {
-              user,
-              elements: {editButton},
-            } = await setupPageLoaded()
-            await user.click(editButton)
+            const {user} = await userClickButton()
             await user.type(screen.getByLabelText('Username'), '-updated')
             await user.click(screen.queryByRole('button', {name: 'Cancel'}))
             await waitFor(() => {
@@ -142,11 +120,7 @@ describe('User Page', () => {
                   return HttpResponse.json({})
                 }),
               )
-              const {
-                user,
-                elements: {editButton},
-              } = await setupPageLoaded()
-              await user.click(editButton)
+              const {user} = await userClickButton()
               await user.click(screen.getByRole('button', {name: 'Save'}))
               await waitFor(() => {
                 expect(screen.queryByRole('status')).toBeInTheDocument()
@@ -162,11 +136,7 @@ describe('User Page', () => {
                 return HttpResponse.json({})
               }),
             )
-            const {
-              user,
-              elements: {editButton},
-            } = await setupPageLoaded()
-            await user.click(editButton)
+            const {user} = await userClickButton()
             await user.click(screen.getByRole('button', {name: 'Save'}))
             await waitFor(() => {
               expect(id).toBe('3')
@@ -181,11 +151,7 @@ describe('User Page', () => {
                 return HttpResponse.json({})
               }),
             )
-            const {
-              user,
-              elements: {editButton},
-            } = await setupPageLoaded()
-            await user.click(editButton)
+            const {user} = await userClickButton()
             await user.type(screen.getByLabelText('Username'), '-updated')
             await user.click(screen.getByRole('button', {name: 'Save'}))
             await waitFor(() => {
@@ -200,11 +166,7 @@ describe('User Page', () => {
                   return HttpResponse.json({})
                 }),
               )
-              const {
-                user,
-                elements: {editButton},
-              } = await setupPageLoaded()
-              await user.click(editButton)
+              const {user} = await userClickButton()
               await user.click(screen.getByRole('button', {name: 'Save'}))
               await waitFor(() => {
                 expect(screen.getByRole('button', {name: 'Edit'})).toBeInTheDocument()
@@ -217,11 +179,7 @@ describe('User Page', () => {
                   return HttpResponse.json({username: 'user3-updated'})
                 }),
               )
-              const {
-                user,
-                elements: {editButton},
-              } = await setupPageLoaded()
-              await user.click(editButton)
+              const {user} = await userClickButton()
               await user.click(screen.getByRole('button', {name: 'Save'}))
               await waitFor(() => {
                 expect(screen.getByText('user3-updated')).toBeInTheDocument()
@@ -237,11 +195,7 @@ describe('User Page', () => {
                 return HttpResponse.error()
               }),
             )
-            const {
-              user,
-              elements: {editButton},
-            } = await setupPageLoaded()
-            await user.click(editButton)
+            const {user} = await userClickButton()
             await user.click(screen.getByRole('button', {name: 'Save'}))
             const text = await screen.findByText('Unexpected error occurred, please try again')
             expect(text).toBeInTheDocument()
@@ -253,11 +207,7 @@ describe('User Page', () => {
                 return HttpResponse.error()
               }),
             )
-            const {
-              user,
-              elements: {editButton},
-            } = await setupPageLoaded()
-            await user.click(editButton)
+            const {user} = await userClickButton()
             await user.click(screen.getByRole('button', {name: 'Save'}))
             await waitFor(() => {
               expect(screen.queryByRole('status')).not.toBeInTheDocument()
@@ -278,11 +228,7 @@ describe('User Page', () => {
                   }
                 }),
               )
-              const {
-                user,
-                elements: {editButton},
-              } = await setupPageLoaded()
-              await user.click(editButton)
+              const {user} = await userClickButton()
               await user.click(screen.getByRole('button', {name: 'Save'}))
               await screen.findByText('Unexpected error occurred, please try again')
               await user.click(screen.getByRole('button', {name: 'Save'}))
@@ -308,11 +254,7 @@ describe('User Page', () => {
                   )
                 }),
               )
-              const {
-                user,
-                elements: {editButton},
-              } = await setupPageLoaded()
-              await user.click(editButton)
+              const {user} = await userClickButton()
               await user.click(screen.getByRole('button', {name: 'Save'}))
               const validationError = await screen.findByText('Username cannot be null')
               expect(validationError).toBeInTheDocument()
@@ -331,11 +273,7 @@ describe('User Page', () => {
                   )
                 }),
               )
-              const {
-                user,
-                elements: {editButton},
-              } = await setupPageLoaded()
-              await user.click(editButton)
+              const {user} = await userClickButton()
               await user.click(screen.getByRole('button', {name: 'Save'}))
               const validationError = await screen.findByText('Username cannot be null')
               await user.type(screen.getByLabelText('Username'), '-updated')
