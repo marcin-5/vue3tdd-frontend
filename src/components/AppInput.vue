@@ -7,6 +7,7 @@
       :type="type"
       :value="modelValue"
       @input="onInput"
+      @change="$emit('change', $event)"
     />
     <span v-if="errorMessage" :class="[classes.span, {' invalid-feedback': errorMessage}]">
       {{ errorMessage }}
@@ -38,7 +39,7 @@ defineProps({
   modelValue: String,
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'change'])
 
 function onInput(event) {
   emit('update:modelValue', event.target.value)
