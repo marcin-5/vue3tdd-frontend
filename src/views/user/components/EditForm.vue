@@ -6,7 +6,13 @@
       v-model="username"
       :error-message="validationErrors.username"
     />
-    <AppInput id="image" :label="$t('selectImage')" type="file" @change="onImageChange" />
+    <AppInput
+      id="image"
+      :label="$t('selectImage')"
+      type="file"
+      @change="onImageChange"
+      :error-message="validationErrors.image"
+    />
     <Alert v-if="generalError" variant="danger">{{ generalError }}</Alert>
     <AppButton type="submit" :in-progress="isSaving">{{ $t('save') }}</AppButton>
     <div class="d-inline m-1"></div>
@@ -58,6 +64,7 @@ const handleError = (error) => {
 }
 
 const onImageChange = (event) => {
+  delete validationErrors.value.image
   const file = event.target.files[0]
   const reader = new FileReader()
   reader.onloadend = () => {
