@@ -39,8 +39,8 @@ const handleSubmit = async () => {
   isSaving.value = true
   generalError.value = undefined
   try {
-    await updateUser(userId, {username: username.value, image: image.value})
-    updateAuthState({username: username.value})
+    const result = await updateUser(userId, {username: username.value, image: image.value})
+    updateAuthState({username: username.value, image: result.data.image})
     emit('save')
   } catch (apiError) {
     handleError(apiError)

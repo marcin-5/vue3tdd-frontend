@@ -6,6 +6,7 @@ const INITIAL_AUTH_STATE = {
   id: 0,
   username: '',
   email: '',
+  image: undefined,
 }
 
 function getStoredAuthState() {
