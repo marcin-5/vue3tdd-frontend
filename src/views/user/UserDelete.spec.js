@@ -44,6 +44,12 @@ const setupPageLoaded = async (id = '3') => {
   return {...result, elements: {deleteButton}}
 }
 
+async function userClickButton(buttonName = 'deleteButton') {
+  const {user, elements} = await setupPageLoaded()
+  await user.click(elements[buttonName])
+  return {user, elements}
+}
+
 initializeServerHandlers()
 
 describe('User Page', () => {
@@ -66,11 +72,7 @@ describe('User Page', () => {
         })
 
         it('displays confirm dialog', async () => {
-          const {
-            user,
-            elements: {deleteButton},
-          } = await setupPageLoaded()
-          await user.click(deleteButton)
+          await userClickButton()
           expect(confirmDialogSpy).toHaveBeenCalledWith('Are you sure?')
         })
 
@@ -86,11 +88,7 @@ describe('User Page', () => {
                   return HttpResponse.error()
                 }),
               )
-              const {
-                user,
-                elements: {deleteButton},
-              } = await setupPageLoaded()
-              await user.click(deleteButton)
+              await userClickButton()
               await waitFor(() => {
                 expect(
                   screen.queryByText('Unexpected error occurred, please try again'),
@@ -104,11 +102,7 @@ describe('User Page', () => {
                   return HttpResponse.error()
                 }),
               )
-              const {
-                user,
-                elements: {deleteButton},
-              } = await setupPageLoaded()
-              await user.click(deleteButton)
+              await userClickButton()
               await screen.findByText('Unexpected error occurred, please try again')
               expect(screen.queryByRole('status')).not.toBeInTheDocument()
             })
@@ -129,8 +123,7 @@ describe('User Page', () => {
                 const {
                   user,
                   elements: {deleteButton},
-                } = await setupPageLoaded()
-                await user.click(deleteButton)
+                } = await userClickButton()
                 const error = await screen.findByText('Unexpected error occurred, please try again')
                 await user.click(deleteButton)
                 expect(error).not.toBeInTheDocument()
@@ -167,11 +160,7 @@ describe('User Page', () => {
                   return HttpResponse.json({})
                 }),
               )
-              const {
-                user,
-                elements: {deleteButton},
-              } = await setupPageLoaded()
-              await user.click(deleteButton)
+              await userClickButton()
               await waitFor(() => {
                 expect(id).toBe('3')
               })
@@ -192,11 +181,7 @@ describe('User Page', () => {
                 return HttpResponse.json({})
               }),
             )
-            const {
-              user,
-              elements: {deleteButton},
-            } = await setupPageLoaded()
-            await user.click(deleteButton)
+            await userClickButton()
             await waitFor(() => {
               expect(router.currentRoute.value.path).toBe('/user/3')
             })
