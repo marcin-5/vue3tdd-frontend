@@ -149,6 +149,26 @@ describe('User Page', () => {
         })
 
         describe('when user clicks save', () => {
+          it('sends request with image', async () => {
+            let requestBody
+            server.use(
+              http.put('/api/v1/users/:id', async ({request}) => {
+                requestBody = await request.json()
+                return HttpResponse.json({})
+              }),
+            )
+            const {user} = await userClickButton()
+            const fileUploadInput = screen.getByLabelText('Select Image')
+            await user.upload(
+              fileUploadInput,
+              new File(['Hello'], 'hello.png', {type: 'image/png'}),
+            )
+            await user.click(screen.getByRole('button', {name: 'Save'}))
+            await waitFor(() => {
+              expect(requestBody).toStrictEqual({username: 'user3', image: 'SGVsbG8='})
+            })
+          })
+
           describe('when api request in progress', () => {
             it('displays spinner', async () => {
               server.use(
