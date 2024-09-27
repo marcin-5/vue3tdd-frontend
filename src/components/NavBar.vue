@@ -29,10 +29,11 @@
               :to="'/user/' + authState.id"
               data-testid="link-my-profile"
             >
-              <img
-                src="/public/assets/profile.png"
+              <ProfileImage
                 :alt="authState.username + ' profile'"
                 width="30"
+                height="30"
+                :image="authState.image"
                 class="rounded-circle shadow-sm"
               />
               {{ authState.username }}
@@ -52,6 +53,7 @@
 <script setup>
 import {useAuthStore} from '@/stores/auth'
 import http from '@/lib/http'
+import {ProfileImage} from '@/components'
 
 const {authState, logout: logoutStore} = useAuthStore()
 

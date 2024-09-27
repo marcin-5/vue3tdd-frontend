@@ -1,9 +1,10 @@
 <template>
   <li class="list-group-item list-group-item-action" @click="router.push('/user/' + user.id)">
-    <img
-      src="/public/assets/profile.png"
+    <ProfileImage
       alt="Profile"
       width="30"
+      height="30"
+      :image="user.image"
       class="rounded-circle shadow-sm"
     />
     {{ user.username }}
@@ -12,6 +13,7 @@
 
 <script setup>
 import {useRouter} from 'vue-router'
+import {ProfileImage} from '@/components'
 
 defineProps({
   user: Object,

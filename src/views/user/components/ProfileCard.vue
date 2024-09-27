@@ -1,12 +1,12 @@
 <template>
   <Card>
     <template v-slot:header>
-      <img
+      <ProfileImage
         class="rounded-circle shadow"
         width="200"
         height="200"
         :alt="user.username + ' profile'"
-        :src="tempImageData || '/assets/profile.png'"
+        :temp-image="tempImageData"
       />
     </template>
     <template v-slot:body>
@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import {AppButton, Card} from '@/components'
+import {AppButton, Card, ProfileImage} from '@/components'
 import UserDeleteButton from './UserDeleteButton.vue'
 import EditForm from './EditForm.vue'
 import {useAuthStore} from '@/stores/auth.js'
