@@ -27,6 +27,7 @@ const {t} = useI18n()
 const emit = defineEmits(['cancel', 'save', 'newImage'])
 const {authState, updateAuthState} = useAuthStore()
 
+const image = ref()
 const isSaving = ref(false)
 const username = ref(authState.username)
 const generalError = ref()
@@ -38,7 +39,7 @@ const handleSubmit = async () => {
   isSaving.value = true
   generalError.value = undefined
   try {
-    await updateUser(userId, {username: username.value})
+    await updateUser(userId, {username: username.value, image: image.value})
     updateAuthState({username: username.value})
     emit('save')
   } catch (apiError) {
@@ -61,6 +62,7 @@ const onImageChange = (event) => {
   const reader = new FileReader()
   reader.onloadend = () => {
     const imageData = reader.result
+    image.value = imageData.split(',')[1]
     emit('newImage', imageData)
   }
   reader.readAsDataURL(file)
