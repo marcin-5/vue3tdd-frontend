@@ -12,7 +12,7 @@ export default mergeConfig(
       globals: true,
       setupFiles: ['./setupTest.js'],
       coverage: {
-        enabled: true,
+        enabled: false,
         provider: 'istanbul',
       },
     },
