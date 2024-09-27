@@ -30,7 +30,7 @@
               data-testid="link-my-profile"
             >
               <img
-                src="../../public/assets/profile.png"
+                src="/public/assets/profile.png"
                 :alt="authState.username + ' profile'"
                 width="30"
                 class="rounded-circle shadow-sm"
