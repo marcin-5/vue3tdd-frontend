@@ -6,6 +6,7 @@
       v-model="username"
       :error-message="validationErrors.username"
     />
+    <AppInput id="image" :label="$t('selectImage')" type="file" @change="onImageChange" />
     <Alert v-if="generalError" variant="danger">{{ generalError }}</Alert>
     <AppButton type="submit" :in-progress="isSaving">{{ $t('save') }}</AppButton>
     <div class="d-inline m-1"></div>
@@ -23,7 +24,7 @@ import {updateUser} from './api'
 import {useI18n} from 'vue-i18n'
 
 const {t} = useI18n()
-const emit = defineEmits(['cancel', 'save'])
+const emit = defineEmits(['cancel', 'save', 'newImage'])
 const {authState, updateAuthState} = useAuthStore()
 
 const isSaving = ref(false)
@@ -53,6 +54,16 @@ const handleError = (error) => {
   } else {
     generalError.value = t('genericError')
   }
+}
+
+const onImageChange = (event) => {
+  const file = event.target.files[0]
+  const reader = new FileReader()
+  reader.onloadend = () => {
+    const imageData = reader.result
+    emit('newImage', imageData)
+  }
+  reader.readAsDataURL(file)
 }
 
 watch(
