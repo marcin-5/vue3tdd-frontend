@@ -138,23 +138,6 @@ describe('User Page', () => {
             })
           })
 
-          it.skip('sends delete request to backend', async () => {
-            server.use(
-              http.delete('/api/v1/users/:id', async ({params}) => {
-                userId = params.id
-                return HttpResponse.json({})
-              }),
-            )
-            const {
-              user,
-              elements: {deleteButton},
-            } = await setupPageLoaded()
-            await user.click(deleteButton)
-            await waitFor(() => {
-              expect(userId).toBe('3')
-            })
-          })
-
           describe('when API request is in progress', () => {
             it('displays spinner', async () => {
               server.use(
@@ -176,9 +159,11 @@ describe('User Page', () => {
           })
 
           describe('when the result is success', () => {
-            it('navigates to home', async () => {
+            it('should log user out and navigates to home', async () => {
+              let id
               server.use(
-                http.delete('/api/v1/users/:id', async () => {
+                http.delete('/api/v1/users/:id', async ({params}) => {
+                  id = params.id
                   return HttpResponse.json({})
                 }),
               )
@@ -188,21 +173,11 @@ describe('User Page', () => {
               } = await setupPageLoaded()
               await user.click(deleteButton)
               await waitFor(() => {
+                expect(id).toBe('3')
+              })
+              await waitFor(() => {
                 expect(router.currentRoute.value.path).toBe('/')
               })
-            })
-
-            it.skip('should log user out', async () => {
-              server.use(
-                http.delete('/api/v1/users/:id', async () => {
-                  return HttpResponse.json({})
-                }),
-              )
-              const {
-                user,
-                elements: {deleteButton},
-              } = await setupPageLoaded()
-              await user.click(deleteButton)
               await waitFor(() => {
                 expect(JSON.parse(localStorage.getItem('auth')).id).toBe(0)
               })
