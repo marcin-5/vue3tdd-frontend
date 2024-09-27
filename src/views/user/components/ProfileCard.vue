@@ -7,6 +7,7 @@
         height="200"
         :alt="user.username + ' profile'"
         :temp-image="tempImageData"
+        :image="image"
       />
     </template>
     <template v-slot:body>
@@ -21,8 +22,8 @@
         </template>
         <EditForm
           v-if="editMode"
-          @cancel="onCancel"
-          @save="editMode = false"
+          @cancel="onEditFinish"
+          @save="onEditFinish"
           @new-image="onNewImage"
         />
       </div>
@@ -47,12 +48,13 @@ const {authState} = useAuthStore()
 const username = computed(() =>
   authState.id === props.user.id ? authState.username : props.user.username,
 )
+const image = computed(() => (authState.id === props.user.id ? authState.image : props.user.image))
 
 const onNewImage = (imageData) => {
   tempImageData.value = imageData
 }
 
-const onCancel = () => {
+const onEditFinish = () => {
   editMode.value = false
   tempImageData.value = undefined
 }
