@@ -242,6 +242,24 @@ describe('User Page', () => {
                 expect(screen.getByText('user3-updated')).toBeInTheDocument()
               })
             })
+
+            it('displays image served from backend', async () => {
+              server.use(
+                http.put('/api/v1/users/:id', () => {
+                  return HttpResponse.json({username: 'user3', image: 'uploaded-image.png'})
+                }),
+              )
+              const {user} = await userClickButton()
+              const fileUploadInput = screen.getByLabelText('Select Image')
+              await user.upload(
+                fileUploadInput,
+                new File(['Hello'], 'hello.png', {type: 'image/png'}),
+              )
+              await user.click(screen.getByRole('button', {name: 'Save'}))
+              await screen.findByTestId('h3-username')
+              const image = screen.getByAltText('user3 profile')
+              expect(image).toHaveAttribute('src', '/images/uploaded-image.png')
+            })
           })
         })
 
